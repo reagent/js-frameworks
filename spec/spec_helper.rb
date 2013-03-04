@@ -6,10 +6,12 @@ Bundler.setup(:default, :test)
 require 'data_mapper'
 require 'sinatra'
 require 'rspec'
+require 'rack/test'
 
 $:.unshift(File.expand_path(File.dirname(__FILE__) + '../../app'))
 
 require 'config/boot'
+require 'app'
 
 require 'factories'
 
