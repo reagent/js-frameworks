@@ -10,7 +10,7 @@ describe User do
 
     it "requires a unique email" do
       email = 'user@host.com'
-      FactoryGirl.create(:user, :email => email)
+      Factory(:user, :email => email)
 
       subject = described_class.new(:email => email)
       subject.valid?
@@ -43,7 +43,7 @@ describe User do
     end
 
     it "does not require a password on an existing record" do
-      subject = described_class.get(FactoryGirl.create(:user).id)
+      subject = described_class.get(Factory(:user).id)
       subject.valid?
 
       subject.errors[:password].should be_empty
@@ -53,7 +53,7 @@ describe User do
   describe "#crypted_password" do
     let(:password) { 'sekrit' }
 
-    subject { FactoryGirl.build(:user, :password => password, :password_confirmation => password) }
+    subject { Factory.build(:user, :password => password, :password_confirmation => password) }
 
     it "is created on save" do
       expect { subject.save }.to change { subject.crypted_password }.from(nil)
@@ -70,7 +70,7 @@ describe User do
 
   describe "#to_json" do
     it "generates a JSON representation" do
-      subject = FactoryGirl.create(:user, :email => 'user@host.com')
+      subject = Factory(:user, :email => 'user@host.com')
       subject.to_json.should == {:id => subject.id, :email => 'user@host.com'}.to_json
     end
   end
