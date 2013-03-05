@@ -1,16 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '../../spec_helper')
 
-describe "Accounts" do
-  include Rack::Test::Methods
-
-  def app
-    App
-  end
-
-  def api_post(path, attributes)
-    post(path, attributes.to_json, 'CONTENT_TYPE' => 'application/json')
-  end
-
+describe "Accounts", :type => :integration do
   describe "creation" do
     it "requires the Content Type to be set" do
       post '/users', {}.to_json

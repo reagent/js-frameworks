@@ -9,28 +9,54 @@ $:.unshift(File.dirname(__FILE__))
 require 'config/boot'
 
 class App < Sinatra::Base
+  before %r{^(?!/$)} do
+    halt 403 unless json_request?
+  end
+
   get '/' do
     erb :index
   end
 
   post '/users' do
-    halt 403 unless json_request?
-
-    headers = {'Content-Type' => json_content_type}
-
-    user = User.new(JSON.parse(request.body.read))
+    user = User.new(parsed_attributes)
 
     if user.save
-      [201, headers, user.to_json]
+      api_send_success_response(user, 201)
     else
-      [400, headers, {:errors => user.errors.values.flatten}.to_json]
+      api_send_error_response(user)
+    end
+  end
+
+  post '/sessions' do
+    session = Session.new(parsed_attributes)
+
+    if session.authenticate
+      api_send_success_response(session)
+    else
+      api_send_error_response(session)
     end
   end
 
   private
 
+  def api_send_success_response(object, status_code = 200)
+    api_send_response(status_code, object)
+  end
+
+  def api_send_error_response(object, status_code = 400)
+    api_send_response(status_code, {:errors => object.errors.values.flatten})
+  end
+
+  def api_send_response(status_code, data_to_send)
+    [status_code, {'Content-Type' => 'application/json'}, data_to_send.to_json]
+  end
+
+  def parsed_attributes
+    JSON.parse(request.body.read)
+  end
+
   def request_content_type
-    request.env['CONTENT_TYPE'] || request.env['HTTP_ACCEPT']
+    request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').first
   end
 
   def json_content_type
