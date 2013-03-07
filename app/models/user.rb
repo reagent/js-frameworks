@@ -6,6 +6,7 @@ class User
   property :crypted_password, BCryptHash
 
   has 1, :token
+  has n, :articles
 
   attr_accessor :password, :password_confirmation
 
