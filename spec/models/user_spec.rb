@@ -68,10 +68,10 @@ describe User do
     end
   end
 
-  describe "#to_json" do
+  describe "#as_json" do
     it "generates a JSON representation" do
       subject = Factory(:user, :email => 'user@host.com')
-      subject.to_json.should == {:id => subject.id, :email => 'user@host.com'}.to_json
+      subject.as_json.should == {:id => subject.id, :email => 'user@host.com'}
     end
   end
 

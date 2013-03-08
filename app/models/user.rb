@@ -15,11 +15,8 @@ class User
 
   before :save, :crypt_password
 
-  def to_json
-    {
-      :id    => id,
-      :email => email
-    }.to_json
+  def as_json(*opts)
+    {:id => id, :email => email}
   end
 
   private

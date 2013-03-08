@@ -33,10 +33,10 @@ describe Article do
     end
   end
 
-  describe "#to_json" do
+  describe "#as_json" do
     it "generates a JSON representation of itself" do
-      subject = described_class.create!(:title => 'A new article')
-      subject.to_json.should == {:id => subject.id, :title => 'A new article'}.to_json
+      subject = described_class.create!(:title => 'A new article', :url => 'http://example.org')
+      subject.as_json.should == {:id => subject.id, :title => 'A new article', :url => 'http://example.org'}
     end
   end
 

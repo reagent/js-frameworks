@@ -6,4 +6,8 @@ class Token
 
   belongs_to :user
 
+  def as_json(*opts)
+    {:token => value}
+  end
+
 end

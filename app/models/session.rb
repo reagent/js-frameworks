@@ -17,9 +17,8 @@ class Session
     @authenticated
   end
 
-  def to_json
-    data = authenticated? ? {:token => matching_user_token.value} : {}
-    data.to_json
+  def as_json(*opts)
+    authenticated? ? matching_user_token.as_json(*opts) : {}
   end
 
   private

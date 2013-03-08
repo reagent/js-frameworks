@@ -6,6 +6,16 @@ FactoryGirl.define do
     password              'sekrit'
     password_confirmation 'sekrit'
   end
+
+  factory :token do
+    user
+  end
+
+  factory :article do
+    user
+    title 'Blah Blah Blah'
+    url   'http://www.example.org'
+  end
 end
 
 def Factory(*args)

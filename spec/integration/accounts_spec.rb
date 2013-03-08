@@ -22,7 +22,7 @@ describe "Accounts", :type => :integration do
       last_response.headers['Content-Type'].should == 'application/json'
 
       last_user = User.last
-      last_response.body.should == last_user.to_json
+      last_response.body.should == JSON.generate({'id' => last_user.id, 'email' => 'user@host.com'})
     end
 
     it "does not create the user when there is an error" do
@@ -33,7 +33,8 @@ describe "Accounts", :type => :integration do
       last_response.status.should == 400
       last_response.headers['Content-Type'].should == 'application/json'
 
-      JSON.parse(last_response.body).should == {'errors' => ['Email must not be blank', 'Password must not be blank']}
+      expected = {'errors' => ['Email must not be blank', 'Password must not be blank']}
+      last_response.body.should == JSON.generate(expected)
     end
   end
 end

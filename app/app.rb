@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'bundler'
 require 'bundler/setup'
 
 require 'sinatra/base'
@@ -15,6 +14,31 @@ class App < Sinatra::Base
 
   get '/' do
     erb :index
+  end
+
+  get '/articles' do
+    api_send_success_response(Article.all)
+  end
+
+  post '/articles' do
+    return not_authorized unless logged_in?
+
+    article = Article.new(parsed_attributes.merge(:user => current_user))
+
+    if article.save
+      api_send_success_response(article)
+    else
+      api_send_error_response(article)
+    end
+  end
+
+  get '/articles/:id' do
+    article = Article.get(params[:id])
+    if article
+      api_send_success_response(article)
+    else
+      not_found
+    end
   end
 
   post '/users' do
@@ -39,6 +63,34 @@ class App < Sinatra::Base
 
   private
 
+  def logged_in?
+    !current_user.nil?
+  end
+
+  def current_user
+    if !instance_variable_defined?(:@current_user)
+      @current_user = user_from_token
+    end
+    @current_user
+  end
+
+  def user_from_token
+    token = Token.get(current_user_token)
+    token ? token.user : nil
+  end
+
+  def current_user_token
+    request.env['HTTP_X_USER_TOKEN']
+  end
+
+  def not_found
+    api_send_response(404)
+  end
+
+  def not_authorized
+    api_send_response(401, {'errors' => ['Authentication is required']})
+  end
+
   def api_send_success_response(object, status_code = 200)
     api_send_response(status_code, object)
   end
@@ -47,8 +99,17 @@ class App < Sinatra::Base
     api_send_response(status_code, {:errors => object.errors.values.flatten})
   end
 
-  def api_send_response(status_code, data_to_send)
-    [status_code, {'Content-Type' => 'application/json'}, data_to_send.to_json]
+  def api_send_response(status_code, data_to_send = nil)
+    body = data_to_send ? data_to_send.to_json : ''
+    [status_code, response_headers, body]
+  end
+
+  def json_content_type
+    'application/json'
+  end
+
+  def response_headers
+    {'Content-Type' => json_content_type}
   end
 
   def parsed_attributes
@@ -57,10 +118,6 @@ class App < Sinatra::Base
 
   def request_content_type
     request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').first
-  end
-
-  def json_content_type
-    'application/json'
   end
 
   def json_request?

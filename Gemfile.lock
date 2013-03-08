@@ -93,11 +93,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   bcrypt-ruby
   data_mapper
   dm-sqlite-adapter
   factory_girl
-  json
   rack-test
   rspec
   sinatra

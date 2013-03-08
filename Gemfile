@@ -3,8 +3,8 @@ source :rubygems
 gem 'sinatra'
 gem 'data_mapper'
 gem 'dm-sqlite-adapter'
-gem 'json'
-gem 'bcrypt-ruby', :require => 'bcrypt'
+gem 'bcrypt-ruby',   :require => 'bcrypt'
+gem 'activesupport', :require => false
 
 group :development do
   gem 'thin', :require => false

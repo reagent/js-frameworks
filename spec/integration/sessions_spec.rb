@@ -22,7 +22,7 @@ describe "Sessions", :type => :integration do
       last_response.status.should == 200
       last_response.headers['Content-Type'].should == 'application/json'
 
-      last_response.body.should == {:token => User.last.token.value}.to_json
+      last_response.body.should == JSON.generate({'token' => User.last.token.value})
     end
 
     it "does not create the session when there is an error" do
@@ -31,7 +31,7 @@ describe "Sessions", :type => :integration do
       last_response.status.should == 400
       last_response.headers['Content-Type'].should == 'application/json'
 
-      last_response.body.should == {:errors => ['Invalid email / password combination']}.to_json
+      last_response.body.should == JSON.generate({'errors' => ['Invalid email / password combination']})
     end
   end
 

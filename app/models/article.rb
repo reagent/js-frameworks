@@ -12,8 +12,8 @@ class Article
 
   validates_with_method :url, :method => :validate_url, :if => :url?
 
-  def to_json
-    {:id => id, :title => title}.to_json
+  def as_json(*opts)
+    {:id => id, :title => title, :url => url.to_s}
   end
 
   private

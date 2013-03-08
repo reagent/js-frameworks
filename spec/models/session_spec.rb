@@ -90,7 +90,7 @@ describe Session do
     end
   end
 
-  describe "#to_json" do
+  describe "#as_json" do
     it "returns a JSON representation of itself" do
       user  = Factory(:user, :email => 'user@host.com', :password => 'password', :password_confirmation => 'password')
       token = Token.create
@@ -99,12 +99,12 @@ describe Session do
       user.save
 
       subject = described_class.new(:email => 'user@host.com', :password => 'password')
-      subject.to_json.should == {:token => token.value}.to_json
+      subject.as_json.should == {:token => token.value}
     end
 
     it "returns an empty JSON object when it can't authenticate" do
       subject = described_class.new(:email => 'user@host.com', :password => 'password')
-      subject.to_json.should == {}.to_json
+      subject.as_json.should == {}
     end
   end
 
