@@ -3,6 +3,7 @@ class User
 
   property :id,               Serial
   property :email,            String, :required => true, :unique => true
+  property :username,         String, :required => true, :unique => true
   property :crypted_password, BCryptHash
 
   has 1, :token
@@ -16,7 +17,7 @@ class User
   before :save, :crypt_password
 
   def as_json(*opts)
-    {:id => id, :email => email}
+    {:id => id, :username => username, :email => email}
   end
 
   private

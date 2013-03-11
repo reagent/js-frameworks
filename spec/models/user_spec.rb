@@ -17,6 +17,21 @@ describe User do
       subject.errors[:email].should_not be_empty
     end
 
+    it "requires a username" do
+      subject.valid?
+      subject.errors[:username].should_not be_empty
+    end
+
+    it "requires a unique username" do
+      username = 'username'
+      Factory(:user, :username => username)
+
+      subject = described_class.new(:username => username)
+      subject.valid?
+
+      subject.errors[:username].should_not be_empty
+    end
+
     it "requires a password on a new record" do
       subject.valid?
       subject.errors[:password].should_not be_empty
@@ -69,9 +84,16 @@ describe User do
   end
 
   describe "#as_json" do
+    subject { Factory(:user, :username => 'username', :email => 'user@host.com') }
+
     it "generates a JSON representation" do
-      subject = Factory(:user, :email => 'user@host.com')
-      subject.as_json.should == {:id => subject.id, :email => 'user@host.com'}
+      expected = {
+        :id       => subject.id,
+        :username => 'username',
+        :email    => 'user@host.com'
+      }
+
+      subject.as_json.should == expected
     end
   end
 
