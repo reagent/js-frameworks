@@ -9,7 +9,7 @@ require 'config/boot'
 
 class App < Sinatra::Base
   before %r{^(?!/$)} do
-    halt 403 unless json_request?
+    halt api_send_response(406) unless json_request?
   end
 
   get '/' do
