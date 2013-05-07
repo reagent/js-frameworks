@@ -34,4 +34,23 @@ describe "Accounts", :type => :integration do
       last_response.should have_response_body({'errors' => ['Password must not be blank']})
     end
   end
+
+  describe "fetching" do
+    it "requires the Content-Type to be set" do
+      get('/users/1').should have_api_status(:not_acceptable).and_have_no_body
+    end
+
+    it "returns a 404 when the user is not found" do
+      api_get('/users/1').should have_api_status(:not_found).and_have_no_body
+    end
+
+    it "returns a matching user" do
+      user = Factory(:user, :username => 'username', :email => 'user@host.com')
+
+      api_get("/users/#{user.id}")
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body({'id' => user.id, 'username' => 'username', 'email' => 'user@host.com'})
+    end
+  end
 end

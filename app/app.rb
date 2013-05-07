@@ -51,6 +51,16 @@ class App < Sinatra::Base
     end
   end
 
+  get '/users/:id' do
+    user = User.get(params[:id])
+
+    if user
+      api_send_success_response(user)
+    else
+      not_found
+    end
+  end
+
   post '/sessions' do
     session = Session.new(parsed_attributes)
 
