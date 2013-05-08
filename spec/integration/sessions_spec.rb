@@ -12,11 +12,11 @@ describe "Sessions", :type => :integration do
     end
 
     it "creates the session and returns the correct response" do
-      Factory(:user, :email => email, :password => password, :password_confirmation => password)
+      user = Factory(:user, :email => email, :password => password, :password_confirmation => password)
 
       api_post('/sessions', attributes) do |response|
         response.should have_api_status(:ok)
-        response.should have_response_body({'token' => User.last.token.value})
+        response.should have_response_body({'token' => user.token.value})
       end
     end
 
