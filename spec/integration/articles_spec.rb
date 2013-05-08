@@ -73,7 +73,7 @@ describe "Articles", :type => :integration do
     it "returns the article" do
       article = Factory(:article, :title => 'One', :url => 'http://example.org/one')
 
-      api_get("/articles/1")
+      api_get('/articles/1')
 
       last_response.should have_api_status(:ok)
       last_response.should have_response_body({'id' => article.id, 'title' => 'One', 'url' => 'http://example.org/one'})
