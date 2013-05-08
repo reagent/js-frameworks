@@ -64,7 +64,7 @@ class App < Sinatra::Base
   end
 
   # Authentication
-  post '/sessions' do
+  post '/session' do
     session = Session.new(parsed_attributes)
 
     if session.authenticate
@@ -72,6 +72,13 @@ class App < Sinatra::Base
     else
       api_send_error_response(session)
     end
+  end
+
+  delete '/session' do
+    return not_authorized unless logged_in?
+
+    current_user.token.destroy
+    api_send_success_response(nil)
   end
 
   # Articles
