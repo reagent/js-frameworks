@@ -40,13 +40,14 @@ end
 RSpec::Matchers.define :have_status do |status_name|
   def status_codes
     {
-      :ok             => 200,
-      :created        => 201,
-      :bad_request    => 400,
-      :unauthorized   => 401,
-      :forbidden      => 403,
-      :not_found      => 404,
-      :not_acceptable => 406
+      :ok                   => 200,
+      :created              => 201,
+      :bad_request          => 400,
+      :unauthorized         => 401,
+      :forbidden            => 403,
+      :not_found            => 404,
+      :not_acceptable       => 406,
+      :unprocessable_entity => 422
     }
   end
 

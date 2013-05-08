@@ -16,6 +16,65 @@ class App < Sinatra::Base
     erb :index
   end
 
+  # Users
+  post '/users' do
+    user = User.new(parsed_attributes)
+
+    if user.save
+      api_send_success_response(user, 201)
+    else
+      api_send_error_response(user)
+    end
+  end
+
+  get '/users/:id' do
+    user = User.get(params[:id])
+
+    if user
+      api_send_success_response(user)
+    else
+      not_found
+    end
+  end
+
+  get '/current_user' do
+    return not_authorized unless logged_in?
+
+    api_send_success_response(current_user)
+  end
+
+  put '/current_user' do
+    return not_authorized unless logged_in?
+
+    if current_user.update(parsed_attributes)
+      api_send_success_response(current_user)
+    else
+      api_send_error_response(current_user, 422)
+    end
+  end
+
+  delete '/current_user' do
+    return not_authorized unless logged_in?
+
+    if current_user.destroy
+      api_send_success_response(nil)
+    else
+      api_send_error_response(current_user, 422)
+    end
+  end
+
+  # Authentication
+  post '/sessions' do
+    session = Session.new(parsed_attributes)
+
+    if session.authenticate
+      api_send_success_response(session)
+    else
+      api_send_error_response(session)
+    end
+  end
+
+  # Articles
   get '/articles' do
     api_send_success_response(Article.all)
   end
@@ -38,36 +97,6 @@ class App < Sinatra::Base
       api_send_success_response(article)
     else
       not_found
-    end
-  end
-
-  post '/users' do
-    user = User.new(parsed_attributes)
-
-    if user.save
-      api_send_success_response(user, 201)
-    else
-      api_send_error_response(user)
-    end
-  end
-
-  get '/users/:id' do
-    user = User.get(params[:id])
-
-    if user
-      api_send_success_response(user)
-    else
-      not_found
-    end
-  end
-
-  post '/sessions' do
-    session = Session.new(parsed_attributes)
-
-    if session.authenticate
-      api_send_success_response(session)
-    else
-      api_send_error_response(session)
     end
   end
 

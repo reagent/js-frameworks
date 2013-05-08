@@ -6,8 +6,8 @@ class User
   property :username,         String, :required => true, :unique => true
   property :crypted_password, BCryptHash
 
-  has 1, :token
-  has n, :articles
+  has 1, :token,    :constraint => :destroy
+  has n, :articles, :constraint => :set_nil
 
   attr_accessor :password, :password_confirmation
 
