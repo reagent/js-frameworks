@@ -5,7 +5,7 @@ module IntegrationSpecHelper
     App
   end
 
-  def api_post(path, attributes, headers = {})
+  def api_post(path, attributes = {}, headers = {})
     post(path, attributes.to_json, api_request_headers.merge(headers))
   end
 
@@ -13,7 +13,7 @@ module IntegrationSpecHelper
     get(path, attributes, api_request_headers.merge(headers))
   end
 
-  def api_put(path, attributes, headers = {})
+  def api_put(path, attributes = {}, headers = {})
     put(path, attributes.to_json, api_request_headers.merge(headers))
   end
 

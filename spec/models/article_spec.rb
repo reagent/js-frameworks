@@ -33,6 +33,20 @@ describe Article do
     end
   end
 
+  describe "#comments" do
+    it "is empty by default" do
+      subject.comments.should == []
+    end
+
+    it "returns a list of associated comments" do
+      subject = Factory(:article)
+      comment = Factory(:comment, :parent => subject)
+      other   = Factory(:comment)
+
+      subject.comments.should == [comment]
+    end
+  end
+
   describe "#as_json" do
     it "generates a JSON representation of itself" do
       subject = described_class.create!(:title => 'A new article', :url => 'http://example.org')

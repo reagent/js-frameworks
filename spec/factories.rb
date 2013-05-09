@@ -23,6 +23,13 @@ FactoryGirl.define do
     title 'Blah Blah Blah'
     url   'http://www.example.org'
   end
+
+  factory :comment do
+    user
+    association :parent, :factory => :article
+    body "OMG WAT?"
+  end
+
 end
 
 def Factory(*args)

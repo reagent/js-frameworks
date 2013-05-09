@@ -8,6 +8,7 @@ class User
 
   has 1, :token,    :constraint => :destroy
   has n, :articles, :constraint => :set_nil
+  has n, :comments, :constraint => :set_nil
 
   attr_accessor :password, :password_confirmation
 

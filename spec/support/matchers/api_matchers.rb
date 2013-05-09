@@ -1,6 +1,6 @@
 RSpec::Matchers.define :have_response_body do |expected|
   def body_for(content)
-    content.is_a?(Hash) ? JSON.generate(content) : content
+    JSON.generate(content)
   end
 
   match do |actual|

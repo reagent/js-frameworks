@@ -107,6 +107,96 @@ class App < Sinatra::Base
     end
   end
 
+  # Comments
+  get '/comments/:id' do
+    comment = Comment.get(params[:id])
+
+    if comment
+      api_send_success_response(comment)
+    else
+      not_found
+    end
+  end
+
+  get '/articles/:id/comments' do
+    article = Article.get(params[:id])
+    if article
+      api_send_success_response(article.comments)
+    else
+      not_found
+    end
+  end
+
+  post '/articles/:id/comments' do
+    return not_authorized unless logged_in?
+
+    parent = Article.get(params[:id])
+
+    if parent
+      comment_attributes = parsed_attributes.merge({
+        :user   => current_user,
+        :parent => parent
+      })
+
+      comment = Comment.new(comment_attributes)
+
+      if comment.save
+        api_send_success_response(comment)
+      else
+        api_send_error_response(comment)
+      end
+    else
+      not_found
+    end
+  end
+
+  get '/comments/:id/comments' do
+    comment = Comment.get(params[:id])
+    if comment
+      api_send_success_response(comment.comments)
+    else
+      not_found
+    end
+  end
+
+  post '/comments/:id/comments' do
+    return not_authorized unless logged_in?
+
+    parent = Comment.get(params[:id])
+    if parent
+      comment_attributes = parsed_attributes.merge({
+        :user   => current_user,
+        :parent => parent
+      })
+
+      comment = Comment.new(comment_attributes)
+
+      if comment.save
+        api_send_success_response(comment)
+      else
+        api_send_error_response(comment)
+      end
+    else
+      not_found
+    end
+  end
+
+  delete '/comments/:id' do
+    return not_authorized unless logged_in?
+
+    comment = Comment.get(params[:id])
+    if comment
+      if comment.user != current_user
+        api_send_response(403, {'errors' => ["You may not delete others' comments"]})
+      else
+        comment.remove
+        api_send_success_response(nil)
+      end
+    else
+      not_found
+    end
+  end
+
   private
 
   def logged_in?

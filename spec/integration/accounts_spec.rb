@@ -2,9 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '../../spec_helper')
 
 describe "Accounts", :type => :integration do
   describe "creation" do
-    it "requires the Content Type to be set" do
-      post('/users', '{}').should have_api_status(:not_acceptable).and_have_no_body
-    end
+    requires_content_type_header_for(:post, '/users')
 
     it "creates a user and returns the correct response" do
       valid_attributes = {
@@ -36,9 +34,7 @@ describe "Accounts", :type => :integration do
   end
 
   describe "fetching a public profile" do
-    it "requires the Content-Type to be set" do
-      get('/users/1').should have_api_status(:not_acceptable).and_have_no_body
-    end
+    requires_content_type_header_for(:get, '/users/1')
 
     it "returns a 404 when the user is not found" do
       api_get('/users/1').should have_api_status(:not_found).and_have_no_body
@@ -55,12 +51,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "fetching the currently logged-in user" do
-    it "requires authentication" do
-      api_get('/current_user')
-
-      last_response.should have_api_status(:unauthorized)
-      last_response.should have_response_body({'errors' => ['Authentication is required']})
-    end
+    requires_content_type_header_for(:get, '/current_user')
+    requires_authentication_for(:get, '/current_user')
 
     it "returns the current user" do
       user = Factory(:user, {
@@ -80,12 +72,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "updating the currently logged-in user" do
-    it "requires authentication" do
-      api_put('/current_user', {:email => 'foo@bar.com'})
-
-      last_response.should have_api_status(:unauthorized)
-      last_response.should have_response_body({'errors' => ['Authentication is required']})
-    end
+    requires_content_type_header_for(:put, '/current_user')
+    requires_authentication_for(:put, '/current_user')
 
     it "updates the user's information" do
       user = Factory(:user, {
@@ -119,12 +107,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "deleting a user's account" do
-    it "requires authentication" do
-      api_delete('/current_user')
-
-      last_response.should have_api_status(:unauthorized)
-      last_response.should have_response_body({'errors' => ['Authentication is required']})
-    end
+    requires_content_type_header_for(:delete, '/current_user')
+    requires_authentication_for(:delete, '/current_user')
 
     it "removes the user" do
       user = Factory(:user, {

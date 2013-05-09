@@ -7,9 +7,7 @@ describe "Sessions", :type => :integration do
     let(:password)   { 'password' }
     let(:attributes) { {:email => email, :password => password} }
 
-    it "requires the Content Type to be set" do
-      post('/sessions', '{}').should have_api_status(:not_acceptable).and_have_no_body
-    end
+    requires_content_type_header_for(:post, '/sessions')
 
     it "creates the session and returns the correct response" do
       user = Factory(:user, :email => email, :password => password, :password_confirmation => password)
@@ -29,12 +27,8 @@ describe "Sessions", :type => :integration do
   end
 
   describe "logout" do
-    it "requires authentication" do
-      api_delete('/session')
-
-      last_response.should have_api_status(:unauthorized)
-      last_response.should have_response_body({'errors' => ['Authentication is required']})
-    end
+    requires_content_type_header_for(:delete, '/session')
+    requires_authentication_for(:delete, '/session')
 
     it "destroy's the user's current token" do
       user  = Factory(:user)
@@ -43,7 +37,6 @@ describe "Sessions", :type => :integration do
       expect do
         api_delete('/session', {'HTTP_X_USER_TOKEN' => token.value})
       end.to change { user.reload.token }.to(nil)
-
     end
   end
 

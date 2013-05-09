@@ -12,9 +12,7 @@ describe "Articles", :type => :integration do
   end
 
   describe "retrieving a list" do
-    it "requires the content type to be set" do
-      get('/articles').should have_api_status(:not_acceptable).and_have_no_body
-    end
+    requires_content_type_header_for(:get, '/articles')
 
     it "returns a collection of articles as JSON" do
       article_1 = Factory(:article, :title => 'One', :url => 'http://example.org/one')
@@ -30,6 +28,9 @@ describe "Articles", :type => :integration do
   end
 
   describe "create" do
+    requires_content_type_header_for(:post, '/articles')
+    requires_authentication_for(:post, '/articles')
+
     it "requires a user" do
       attributes = {:title => 'One', :url => 'http://example.org'}
       api_post('/articles', attributes)
@@ -66,6 +67,8 @@ describe "Articles", :type => :integration do
   end
 
   describe "fetching a single article" do
+    requires_content_type_header_for(:get, '/articles/1')
+
     it "returns a 404 when it does not exist" do
       api_get('/articles/1').should have_api_status(:not_found).and_have_no_body
     end

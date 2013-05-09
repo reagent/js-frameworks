@@ -2,6 +2,8 @@ require 'data_mapper'
 require 'active_support/json'
 require 'bcrypt'
 
+ENV['APP_ENV'] ||= 'development'
+
 # If you want the logs displayed you have to do this before the call to setup
 # DataMapper::Logger.new($stdout, :debug)
 
@@ -10,7 +12,7 @@ require 'bcrypt'
 
 # Persistent Sqlite3 connection
 root = File.expand_path(File.dirname(__FILE__) + '/..')
-DataMapper.setup(:default, "sqlite:///#{root}/db/js-frameworks.sqlite3")
+DataMapper.setup(:default, "sqlite:///#{root}/db/js-frameworks-#{ENV['APP_ENV']}.sqlite3")
 
 require 'models'
 

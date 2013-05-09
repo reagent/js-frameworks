@@ -12,6 +12,10 @@ class Article
 
   validates_with_method :url, :method => :validate_url, :if => :url?
 
+  def comments
+    @comments = Comment.all(:parent_id => id, :parent_type => 'Article')
+  end
+
   def as_json(*opts)
     {:id => id, :title => title, :url => url.to_s}
   end
