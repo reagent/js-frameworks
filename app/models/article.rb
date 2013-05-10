@@ -13,7 +13,11 @@ class Article
   validates_with_method :url, :method => :validate_url, :if => :url?
 
   def comments
-    @comments = Comment.all(:parent_id => id, :parent_type => 'Article')
+    @comments ||= Comment.all(:parent_id => id, :parent_type => 'Article')
+  end
+
+  def votes
+    @votes ||= Vote.all(:target_id => id, :target_type => 'Article')
   end
 
   def as_json(*opts)

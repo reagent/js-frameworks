@@ -197,6 +197,55 @@ class App < Sinatra::Base
     end
   end
 
+  # Votes
+  post '/articles/:id/votes' do
+    return not_authorized unless logged_in?
+    target = Article.get(params[:id])
+
+    if target
+      vote = Vote.new(parsed_attributes.merge(:user => current_user, :target => target))
+
+      if vote.save
+        api_send_success_response(nil)
+      else
+        api_send_error_response(vote)
+      end
+    else
+      not_found
+    end
+  end
+
+  post '/comments/:id/votes' do
+    return not_authorized unless logged_in?
+    target = Comment.get(params[:id])
+
+    if target
+      vote = Vote.new(parsed_attributes.merge(:user => current_user, :target => target))
+      if vote.save
+        api_send_success_response(nil)
+      else
+        api_send_error_response(vote)
+      end
+    else
+      not_found
+    end
+  end
+
+  delete '/votes/:id' do
+    return not_authorized unless logged_in?
+    vote = Vote.get(params[:id])
+    if vote
+      if vote.user != current_user
+        api_send_response(403, {'errors' => ["You may not delete others' votes"]})
+      else
+        vote.destroy
+        api_send_success_response(nil)
+      end
+    else
+      not_found
+    end
+  end
+
   private
 
   def logged_in?

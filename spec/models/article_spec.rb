@@ -47,6 +47,20 @@ describe Article do
     end
   end
 
+  describe "#votes" do
+    it "is empty by default" do
+      subject.votes.should == []
+    end
+
+    it "returns a list of associated votes" do
+      subject = Factory(:article)
+      vote    = Factory(:vote, :target => subject)
+      other   = Factory(:vote)
+
+      subject.votes.should == [vote]
+    end
+  end
+
   describe "#as_json" do
     it "generates a JSON representation of itself" do
       subject = described_class.create!(:title => 'A new article', :url => 'http://example.org')

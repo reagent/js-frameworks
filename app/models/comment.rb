@@ -29,6 +29,10 @@ class Comment
     @comments ||= Comment.all(:parent_id => id, :parent_type => 'Comment')
   end
 
+  def votes
+    @votes ||= Vote.all(:target_id => id, :target_type => 'Comment')
+  end
+
   def remove
     update(:body => '[removed]')
   end

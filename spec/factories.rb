@@ -30,6 +30,11 @@ FactoryGirl.define do
     body "OMG WAT?"
   end
 
+  factory :vote do
+    user
+    association :target, :factory => :article
+  end
+
 end
 
 def Factory(*args)

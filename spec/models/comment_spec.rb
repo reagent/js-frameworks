@@ -13,7 +13,7 @@ describe Comment do
       subject.errors[:body].should_not be_empty
     end
 
-    it "requires a commentable" do
+    it "requires a parent" do
       subject.valid?
       subject.errors[:parent].should_not be_empty
     end
@@ -79,11 +79,25 @@ describe Comment do
       parent.comments.should == [child]
     end
   end
-  
+
+  describe "#votes" do
+    it "is empty by default" do
+      subject.votes.should == []
+    end
+
+    it "returns a list of associated votes" do
+      subject = Factory(:comment)
+      vote    = Factory(:vote, :target => subject)
+      other   = Factory(:vote)
+
+      subject.votes.should == [vote]
+    end
+  end
+
   describe "#remove" do
     it "replaces the body content" do
       subject = Factory(:comment, :body => 'OMGHI2U')
-      
+
       expect { subject.remove }.to change { subject.body }.from('OMGHI2U').to('[removed]')
     end
   end
