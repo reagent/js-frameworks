@@ -8,8 +8,16 @@ $:.unshift(File.dirname(__FILE__))
 require 'config/boot'
 
 class App < Sinatra::Base
-  before %r{^(?!/$)} do
-    halt api_send_response(406) unless json_request?
+  def self.api(verb, route, options = {}, &block)
+    send(verb, route) do
+      if !json_request?
+        halt api_send_response(406)
+      elsif options[:authenticate] && !logged_in?
+        halt not_authorized
+      else
+        instance_eval(&block)
+      end
+    end
   end
 
   get '/' do
@@ -17,7 +25,7 @@ class App < Sinatra::Base
   end
 
   # Users
-  post '/users' do
+  api :post, '/users' do
     user = User.new(parsed_attributes)
 
     if user.save
@@ -27,7 +35,7 @@ class App < Sinatra::Base
     end
   end
 
-  get '/users/:id' do
+  api :get, '/users/:id' do
     user = User.get(params[:id])
 
     if user
@@ -37,15 +45,11 @@ class App < Sinatra::Base
     end
   end
 
-  get '/current_user' do
-    return not_authorized unless logged_in?
-
+  api :get, '/current_user', :authenticate => true do
     api_send_success_response(current_user)
   end
 
-  put '/current_user' do
-    return not_authorized unless logged_in?
-
+  api :put, '/current_user', :authenticate => true do
     if current_user.update(parsed_attributes)
       api_send_success_response(current_user)
     else
@@ -53,9 +57,7 @@ class App < Sinatra::Base
     end
   end
 
-  delete '/current_user' do
-    return not_authorized unless logged_in?
-
+  api :delete, '/current_user', :authenticate => true do
     if current_user.destroy
       api_send_success_response(nil)
     else
@@ -64,7 +66,7 @@ class App < Sinatra::Base
   end
 
   # Authentication
-  post '/session' do
+  api :post, '/session' do
     session = Session.new(parsed_attributes)
 
     if session.authenticate
@@ -74,21 +76,17 @@ class App < Sinatra::Base
     end
   end
 
-  delete '/session' do
-    return not_authorized unless logged_in?
-
+  api :delete, '/session', :authenticate => true do
     current_user.token.destroy
     api_send_success_response(nil)
   end
 
   # Articles
-  get '/articles' do
+  api :get, '/articles' do
     api_send_success_response(Article.all)
   end
 
-  post '/articles' do
-    return not_authorized unless logged_in?
-
+  api :post, '/articles', :authenticate => true do
     article = Article.new(parsed_attributes.merge(:user => current_user))
 
     if article.save
@@ -98,7 +96,7 @@ class App < Sinatra::Base
     end
   end
 
-  get '/articles/:id' do
+  api :get, '/articles/:id' do
     article = Article.get(params[:id])
     if article
       api_send_success_response(article)
@@ -108,7 +106,7 @@ class App < Sinatra::Base
   end
 
   # Comments
-  get '/comments/:id' do
+  api :get, '/comments/:id' do
     comment = Comment.get(params[:id])
 
     if comment
@@ -118,7 +116,7 @@ class App < Sinatra::Base
     end
   end
 
-  get '/articles/:id/comments' do
+  api :get, '/articles/:id/comments' do
     article = Article.get(params[:id])
     if article
       api_send_success_response(article.comments)
@@ -127,9 +125,7 @@ class App < Sinatra::Base
     end
   end
 
-  post '/articles/:id/comments' do
-    return not_authorized unless logged_in?
-
+  api :post, '/articles/:id/comments', :authenticate => true do
     parent = Article.get(params[:id])
 
     if parent
@@ -150,7 +146,7 @@ class App < Sinatra::Base
     end
   end
 
-  get '/comments/:id/comments' do
+  api :get, '/comments/:id/comments' do
     comment = Comment.get(params[:id])
     if comment
       api_send_success_response(comment.comments)
@@ -159,9 +155,7 @@ class App < Sinatra::Base
     end
   end
 
-  post '/comments/:id/comments' do
-    return not_authorized unless logged_in?
-
+  api :post, '/comments/:id/comments', :authenticate => true do
     parent = Comment.get(params[:id])
     if parent
       comment_attributes = parsed_attributes.merge({
@@ -181,9 +175,7 @@ class App < Sinatra::Base
     end
   end
 
-  delete '/comments/:id' do
-    return not_authorized unless logged_in?
-
+  api :delete, '/comments/:id', :authenticate => true do
     comment = Comment.get(params[:id])
     if comment
       if comment.user != current_user
@@ -198,8 +190,7 @@ class App < Sinatra::Base
   end
 
   # Votes
-  post '/articles/:id/votes' do
-    return not_authorized unless logged_in?
+  api :post, '/articles/:id/votes', :authenticate => true do
     target = Article.get(params[:id])
 
     if target
@@ -215,8 +206,7 @@ class App < Sinatra::Base
     end
   end
 
-  post '/comments/:id/votes' do
-    return not_authorized unless logged_in?
+  api :post, '/comments/:id/votes', :authenticate => true do
     target = Comment.get(params[:id])
 
     if target
@@ -231,8 +221,7 @@ class App < Sinatra::Base
     end
   end
 
-  delete '/votes/:id' do
-    return not_authorized unless logged_in?
+  api :delete, '/votes/:id', :authenticate => true do
     vote = Vote.get(params[:id])
     if vote
       if vote.user != current_user

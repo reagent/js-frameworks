@@ -7,7 +7,7 @@ describe "Sessions", :type => :integration do
     let(:password)   { 'password' }
     let(:attributes) { {:email => email, :password => password} }
 
-    requires_content_type_header_for(:post, '/sessions')
+    requires_content_type_header_for(:post, '/session')
 
     it "creates the session and returns the correct response" do
       user = Factory(:user, :email => email, :password => password, :password_confirmation => password)
