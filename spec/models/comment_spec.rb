@@ -15,7 +15,7 @@ describe Comment do
 
     it "requires a parent" do
       subject.valid?
-      subject.errors[:parent].should_not be_empty
+      subject.errors[:parent].should == ['is required']
     end
   end
 

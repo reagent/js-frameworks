@@ -1,5 +1,6 @@
 class Article
   include DataMapper::Resource
+  extend Polymorphism
 
   property :id,      Serial
   property :user_id, Integer, :required => true
@@ -8,17 +9,12 @@ class Article
 
   belongs_to :user
 
+  polymorphic_many :comments, :as => :parent
+  polymorphic_many :votes,    :as => :target
+
   validates_presence_of :url, :message => 'URL must not be blank'
 
   validates_with_method :url, :method => :validate_url, :if => :url?
-
-  def comments
-    @comments ||= Comment.all(:parent_id => id, :parent_type => 'Article')
-  end
-
-  def votes
-    @votes ||= Vote.all(:target_id => id, :target_type => 'Article')
-  end
 
   def as_json(*opts)
     {:id => id, :title => title, :url => url.to_s}

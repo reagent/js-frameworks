@@ -1,37 +1,17 @@
 class Comment
   include DataMapper::Resource
+  extend Polymorphism
 
   property :id,          Serial
   property :user_id,     Integer, :required => true
   property :body,        Text,    :required => true
-  property :parent_id,   Integer, :required => true
-  property :parent_type, String,  :required => true
 
   belongs_to :user
 
-  validates_with_method :parent, :method => :confirm_parent_set
+  polymorphic_belongs_to :parent
 
-  def parent=(parent)
-    if parent
-      self.parent_id   = parent.id
-      self.parent_type = parent.class.to_s
-    else
-      self.parent_id   = nil
-      self.parent_type = nil
-    end
-  end
-
-  def parent
-    Object.const_get(parent_type).get(parent_id) if parent_set?
-  end
-
-  def comments
-    @comments ||= Comment.all(:parent_id => id, :parent_type => 'Comment')
-  end
-
-  def votes
-    @votes ||= Vote.all(:target_id => id, :target_type => 'Comment')
-  end
+  polymorphic_many :comments, :as => :parent
+  polymorphic_many :votes,    :as => :target
 
   def remove
     update(:body => '[removed]')
@@ -41,17 +21,4 @@ class Comment
     {:id => id, :body => body}
   end
 
-  private
-
-  def parent_set?
-    parent_id && parent_type
-  end
-
-  def confirm_parent_set
-    if parent_set?
-      true
-    else
-      [false, 'Requires a parent']
-    end
-  end
 end

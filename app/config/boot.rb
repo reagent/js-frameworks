@@ -1,5 +1,6 @@
 require 'data_mapper'
 require 'active_support/json'
+require 'active_support/inflector'
 require 'bcrypt'
 
 ENV['APP_ENV'] ||= 'development'
@@ -14,6 +15,7 @@ ENV['APP_ENV'] ||= 'development'
 root = File.expand_path(File.dirname(__FILE__) + '/..')
 DataMapper.setup(:default, "sqlite:///#{root}/db/js-frameworks-#{ENV['APP_ENV']}.sqlite3")
 
+require 'lib/polymorphism'
 require 'models'
 
 DataMapper.auto_upgrade!

@@ -10,7 +10,7 @@ describe Vote do
 
     it "requires a target" do
       subject.valid?
-      subject.errors[:target].should_not be_empty
+      subject.errors[:target].should == ['is required']
     end
 
     it "only allows one vote for an article" do
