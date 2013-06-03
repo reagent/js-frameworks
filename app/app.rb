@@ -26,23 +26,11 @@ class App < Sinatra::Base
 
   # Users
   api :post, '/users' do
-    user = User.new(parsed_attributes)
-
-    if user.save
-      api_send_success_response(user, 201)
-    else
-      api_send_error_response(user)
-    end
+    create_resource(User)
   end
 
   api :get, '/users/:id' do
-    user = User.get(params[:id])
-
-    if user
-      api_send_success_response(user)
-    else
-      not_found
-    end
+    fetch_resource(User, params[:id])
   end
 
   api :get, '/current_user', :authenticate => true do
@@ -87,37 +75,21 @@ class App < Sinatra::Base
   end
 
   api :post, '/articles', :authenticate => true do
-    article = Article.new(parsed_attributes.merge(:user => current_user))
-
-    if article.save
-      api_send_success_response(article)
-    else
-      api_send_error_response(article)
-    end
+    create_resource(Article, :user => current_user)
   end
 
   api :get, '/articles/:id' do
-    article = Article.get(params[:id])
-    if article
-      api_send_success_response(article)
-    else
-      not_found
-    end
+    fetch_resource(Article, params[:id])
   end
 
   # Comments
   api :get, '/comments/:id' do
-    comment = Comment.get(params[:id])
-
-    if comment
-      api_send_success_response(comment)
-    else
-      not_found
-    end
+    fetch_resource(Comment, params[:id])
   end
 
   api :get, '/articles/:id/comments' do
     article = Article.get(params[:id])
+
     if article
       api_send_success_response(article.comments)
     else
@@ -129,18 +101,7 @@ class App < Sinatra::Base
     parent = Article.get(params[:id])
 
     if parent
-      comment_attributes = parsed_attributes.merge({
-        :user   => current_user,
-        :parent => parent
-      })
-
-      comment = Comment.new(comment_attributes)
-
-      if comment.save
-        api_send_success_response(comment)
-      else
-        api_send_error_response(comment)
-      end
+      create_resource(Comment, :user => current_user, :parent => parent)
     else
       not_found
     end
@@ -148,6 +109,7 @@ class App < Sinatra::Base
 
   api :get, '/comments/:id/comments' do
     comment = Comment.get(params[:id])
+
     if comment
       api_send_success_response(comment.comments)
     else
@@ -157,19 +119,9 @@ class App < Sinatra::Base
 
   api :post, '/comments/:id/comments', :authenticate => true do
     parent = Comment.get(params[:id])
+
     if parent
-      comment_attributes = parsed_attributes.merge({
-        :user   => current_user,
-        :parent => parent
-      })
-
-      comment = Comment.new(comment_attributes)
-
-      if comment.save
-        api_send_success_response(comment)
-      else
-        api_send_error_response(comment)
-      end
+      create_resource(Comment, :user => current_user, :parent => parent)
     else
       not_found
     end
@@ -177,6 +129,7 @@ class App < Sinatra::Base
 
   api :delete, '/comments/:id', :authenticate => true do
     comment = Comment.get(params[:id])
+
     if comment
       if comment.user != current_user
         api_send_response(403, {'errors' => ["You may not delete others' comments"]})
@@ -236,6 +189,26 @@ class App < Sinatra::Base
   end
 
   private
+
+  def create_resource(klass, additional_attributes = {})
+    resource = klass.new(parsed_attributes.merge(additional_attributes))
+
+    if resource.save
+      api_send_success_response(resource, 201)
+    else
+      api_send_error_response(resource)
+    end
+  end
+
+  def fetch_resource(klass, id)
+    resource = klass.get(id)
+
+    if resource
+      api_send_success_response(resource)
+    else
+      not_found
+    end
+  end
 
   def logged_in?
     !current_user.nil?

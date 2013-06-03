@@ -69,7 +69,7 @@ describe "Comments", :type => :integration do
 
         last_comment = Comment.last
 
-        last_response.should have_api_status(:ok)
+        last_response.should have_api_status(:created)
         last_response.should have_response_body(:id => last_comment.id, :body => 'OMGHI2U')
 
         last_comment.user.should == token.user
@@ -138,7 +138,7 @@ describe "Comments", :type => :integration do
 
         last_comment = Comment.last
 
-        last_response.should have_api_status(:ok)
+        last_response.should have_api_status(:created)
         last_response.should have_response_body(:id => last_comment.id, :body => 'OMGHI2U')
 
         last_comment.user.should == token.user

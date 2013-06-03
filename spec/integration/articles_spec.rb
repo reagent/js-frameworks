@@ -49,7 +49,7 @@ describe "Articles", :type => :integration do
         api_post('/articles', attributes, {'HTTP_X_USER_TOKEN' => token.value})
       end.to change { user.articles.count }.by(1)
 
-      last_response.should have_api_status(:ok)
+      last_response.should have_api_status(:created)
       last_response.should have_response_body({'id' => Article.last.id, 'title' => 'One', 'url' => 'http://example.org'})
     end
 
