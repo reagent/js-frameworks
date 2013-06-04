@@ -13,4 +13,8 @@ class Vote
                           :scope => [:target_id, :target_type],
                           :message => "You've already voted for this item"
 
+  def as_json(*opts)
+    {:id => id}
+  end
+
 end

@@ -83,4 +83,13 @@ describe Vote do
     end
   end
 
+  describe "#as_json" do
+    it "returns a representation of itself" do
+      comment = Factory(:comment)
+      subject = described_class.create!(:user => Factory(:user), :target => comment)
+
+      subject.as_json.should == {:id => subject.id}
+    end
+  end
+
 end

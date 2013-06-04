@@ -147,13 +147,7 @@ class App < Sinatra::Base
     target = Article.get(params[:id])
 
     if target
-      vote = Vote.new(parsed_attributes.merge(:user => current_user, :target => target))
-
-      if vote.save
-        api_send_success_response(nil)
-      else
-        api_send_error_response(vote)
-      end
+      create_resource(Vote, :user => current_user, :target => target)
     else
       not_found
     end
@@ -163,12 +157,7 @@ class App < Sinatra::Base
     target = Comment.get(params[:id])
 
     if target
-      vote = Vote.new(parsed_attributes.merge(:user => current_user, :target => target))
-      if vote.save
-        api_send_success_response(nil)
-      else
-        api_send_error_response(vote)
-      end
+      create_resource(Vote, :user => current_user, :target => target)
     else
       not_found
     end

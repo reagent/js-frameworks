@@ -21,7 +21,8 @@ describe "Voting", :type => :integration do
         api_post("/articles/#{article.id}/votes", {}, headers)
       end.to change { article.votes.count }.from(0).to(1)
 
-      last_response.should have_api_status(:ok).and_have_no_body
+      last_response.should have_api_status(:created)
+      last_response.should have_response_body({'id' => Vote.last.id})
     end
 
     it "returns errors when creation fails" do
@@ -56,7 +57,8 @@ describe "Voting", :type => :integration do
         api_post("/comments/#{comment.id}/votes", {}, headers)
       end.to change { comment.votes.count }.from(0).to(1)
 
-      last_response.should have_api_status(:ok).and_have_no_body
+      last_response.should have_api_status(:created)
+      last_response.should have_response_body({'id' => Vote.last.id})
     end
 
     it "returns errors when creation fails" do
