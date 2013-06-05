@@ -83,4 +83,45 @@ describe "Articles", :type => :integration do
     end
   end
 
+  describe "fetching a User's posted articles" do
+    requires_content_type_header_for(:get, '/users/1/articles')
+
+    it "returns a 404 when the user does not exist" do
+      api_get('/users/1/articles').should have_api_status(:not_found).and_have_no_body
+    end
+
+    it "returns the user's posted articles" do
+      user_1 = Factory(:user)
+      user_2 = Factory(:user)
+
+      article_1 = Factory(:article, :user => user_1, :title => 'Foo', :url => 'http://example.com')
+      article_2 = Factory(:article, :user => user_2)
+
+      api_get("/users/#{user_1.id}/articles")
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body([{'id' => article_1.id, 'title' => 'Foo', 'url' => 'http://example.com'}])
+    end
+  end
+
+  describe "fetching the current user's posted articles" do
+    requires_content_type_header_for(:get, '/account/articles')
+    requires_authentication_for(:get, '/account/articles')
+
+    it "returns the list of articles" do
+      token  = Factory(:token)
+
+      user_1 = token.user
+      user_2 = Factory(:user)
+
+      article_1 = Factory(:article, :user => user_1, :title => 'Foo', :url => 'http://example.com')
+      article_2 = Factory(:article, :user => user_2)
+
+      api_get('/account/articles', {}, {'HTTP_X_USER_TOKEN' => token.value})
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body([{'id' => article_1.id, 'title' => 'Foo', 'url' => 'http://example.com'}])
+    end
+  end
+
 end

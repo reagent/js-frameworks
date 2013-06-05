@@ -82,6 +82,20 @@ class App < Sinatra::Base
     fetch_resource(Article, params[:id])
   end
 
+  api :get, '/users/:id/articles' do
+    user = User.get(params[:id])
+
+    if user
+      api_send_success_response(user.articles)
+    else
+      not_found
+    end
+  end
+
+  api :get, '/account/articles', :authenticate => true do
+    api_send_success_response(current_user.articles)
+  end
+
   # Comments
   api :get, '/comments/:id' do
     fetch_resource(Comment, params[:id])
