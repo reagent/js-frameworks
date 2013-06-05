@@ -74,34 +74,4 @@ describe "Voting", :type => :integration do
     end
   end
 
-  describe "deleting" do
-    let(:token)   { Factory(:token) }
-    let(:headers) { {'HTTP_X_USER_TOKEN' => token.value} }
-
-    requires_content_type_header_for(:delete, '/votes/1')
-    requires_authentication_for(:delete, '/votes/1')
-
-    it "returns a 404 if the vote does not exist" do
-      api_delete('/votes/1', headers).should have_api_status(:not_found).and_have_no_body
-    end
-
-    it "does not allow deletion by someone other than the poster" do
-      vote = Factory(:vote)
-      api_delete("/votes/#{vote.id}", headers)
-
-      last_response.should have_api_status(:forbidden)
-      last_response.should have_response_body({'errors' => ["You may not delete others' votes"]})
-    end
-
-    it "removes the vote" do
-      vote = Factory(:vote, :user => token.user)
-
-      api_delete("/votes/#{vote.id}", headers)
-
-      Vote.get(vote.id).should be_nil
-
-      last_response.should have_api_status(:ok).and_have_no_body
-    end
-  end
-
 end

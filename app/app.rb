@@ -163,20 +163,6 @@ class App < Sinatra::Base
     end
   end
 
-  api :delete, '/votes/:id', :authenticate => true do
-    vote = Vote.get(params[:id])
-    if vote
-      if vote.user != current_user
-        api_send_response(403, {'errors' => ["You may not delete others' votes"]})
-      else
-        vote.destroy
-        api_send_success_response(nil)
-      end
-    else
-      not_found
-    end
-  end
-
   private
 
   def create_resource(klass, additional_attributes = {})
