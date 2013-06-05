@@ -51,8 +51,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "fetching the currently logged-in user" do
-    requires_content_type_header_for(:get, '/current_user')
-    requires_authentication_for(:get, '/current_user')
+    requires_content_type_header_for(:get, '/account')
+    requires_authentication_for(:get, '/account')
 
     it "returns the current user" do
       user = Factory(:user, {
@@ -64,7 +64,7 @@ describe "Accounts", :type => :integration do
 
       token = Factory(:token, :user => user)
 
-      api_get('/current_user', {}, {'HTTP_X_USER_TOKEN' => token.value})
+      api_get('/account', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
       last_response.should have_response_body({'id' => user.id, 'username' => 'username', 'email' => 'user@host.com'})
@@ -72,8 +72,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "updating the currently logged-in user" do
-    requires_content_type_header_for(:put, '/current_user')
-    requires_authentication_for(:put, '/current_user')
+    requires_content_type_header_for(:put, '/account')
+    requires_authentication_for(:put, '/account')
 
     it "updates the user's information" do
       user = Factory(:user, {
@@ -86,7 +86,7 @@ describe "Accounts", :type => :integration do
       token = Factory(:token, :user => user)
 
       expect do
-        api_put('/current_user', {:username => 'foobar'}, {'HTTP_X_USER_TOKEN' => token.value})
+        api_put('/account', {:username => 'foobar'}, {'HTTP_X_USER_TOKEN' => token.value})
       end.to change { user.reload.username }.from('username').to('foobar')
 
       last_response.should have_api_status(:ok)
@@ -99,7 +99,7 @@ describe "Accounts", :type => :integration do
 
       token = Factory(:token, :user => user)
 
-      api_put('/current_user', {:username => 'username_1'}, {'HTTP_X_USER_TOKEN' => token.value})
+      api_put('/account', {:username => 'username_1'}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:unprocessable_entity)
       last_response.should have_response_body({'errors' => ['Username is already taken']})
@@ -107,8 +107,8 @@ describe "Accounts", :type => :integration do
   end
 
   describe "deleting a user's account" do
-    requires_content_type_header_for(:delete, '/current_user')
-    requires_authentication_for(:delete, '/current_user')
+    requires_content_type_header_for(:delete, '/account')
+    requires_authentication_for(:delete, '/account')
 
     it "removes the user" do
       user = Factory(:user, {
@@ -120,7 +120,7 @@ describe "Accounts", :type => :integration do
 
       token = Factory(:token, :user => user)
 
-      api_delete('/current_user', {'HTTP_X_USER_TOKEN' => token.value})
+      api_delete('/account', {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok).and_have_no_body
 

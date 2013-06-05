@@ -33,11 +33,11 @@ class App < Sinatra::Base
     fetch_resource(User, params[:id])
   end
 
-  api :get, '/current_user', :authenticate => true do
+  api :get, '/account', :authenticate => true do
     api_send_success_response(current_user)
   end
 
-  api :put, '/current_user', :authenticate => true do
+  api :put, '/account', :authenticate => true do
     if current_user.update(parsed_attributes)
       api_send_success_response(current_user)
     else
@@ -45,7 +45,7 @@ class App < Sinatra::Base
     end
   end
 
-  api :delete, '/current_user', :authenticate => true do
+  api :delete, '/account', :authenticate => true do
     if current_user.destroy
       api_send_success_response(nil)
     else
