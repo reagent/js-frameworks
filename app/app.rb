@@ -141,6 +141,20 @@ class App < Sinatra::Base
     end
   end
 
+  api :get, '/users/:id/comments' do
+    user = User.get(params[:id])
+
+    if user
+      api_send_success_response(user.comments)
+    else
+      not_found
+    end
+  end
+
+  api :get, '/account/comments', :authenticate => true do
+    api_send_success_response(current_user.comments)
+  end
+
   api :delete, '/comments/:id', :authenticate => true do
     comment = Comment.get(params[:id])
 

@@ -187,4 +187,45 @@ describe "Comments", :type => :integration do
     end
   end
 
+  describe "fetching a User's posted comments" do
+    requires_content_type_header_for(:get, '/users/1/comments')
+
+    it "returns a 404 when the user does not exist" do
+      api_get('/users/1/articles').should have_api_status(:not_found).and_have_no_body
+    end
+
+    it "returns the user's comments" do
+      user_1 = Factory(:user)
+      user_2 = Factory(:user)
+
+      comment_1 = Factory(:comment, :user => user_1, :body => 'OMGHI2U!')
+      comment_2 = Factory(:comment, :user => user_2)
+
+      api_get("/users/#{user_1.id}/comments")
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body([{'id' => comment_1.id, 'body' => 'OMGHI2U!'}])
+    end
+  end
+
+  describe "fetching the current user's comments" do
+    requires_content_type_header_for(:get, '/account/comments')
+    requires_authentication_for(:get, '/account/comments')
+
+    it "returns the list of comments" do
+      token  = Factory(:token)
+
+      user_1 = token.user
+      user_2 = Factory(:user)
+
+      comment_1 = Factory(:comment, :user => user_1, :body => 'OMGHI2U!')
+      comment_2 = Factory(:comment, :user => user_2)
+
+      api_get('/account/comments', {}, {'HTTP_X_USER_TOKEN' => token.value})
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body([{'id' => comment_1.id, 'body' => 'OMGHI2U!'}])
+    end
+  end
+
 end
