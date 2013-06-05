@@ -22,7 +22,7 @@ describe Article do
       subject.url = 'bogon'
       subject.valid?
 
-      subject.errors[:url].should == ['URL is invalid']
+      subject.errors[:url].should == ['is invalid']
     end
 
     it "knows that the URL is valid" do

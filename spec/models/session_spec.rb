@@ -31,7 +31,7 @@ describe Session do
       subject = described_class.new(:email => 'user@host.com', :password => 'password')
       subject.valid?
 
-      subject.errors[:user].should include('Invalid email / password combination')
+      subject.errors[:general].should == ['Invalid email / password combination']
     end
 
     it "knows the user exists" do
@@ -61,7 +61,7 @@ describe Session do
 
       it "sets errors" do
         subject.authenticate
-        subject.errors[:user].should_not be_empty
+        subject.errors[:general].should_not be_empty
       end
     end
 

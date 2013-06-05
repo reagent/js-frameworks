@@ -4,7 +4,7 @@ class Session
   attr_accessor :email, :password
   validates_presence_of :email, :password
 
-  validates_with_method :user, :method => :matching_user_exists
+  validates_with_method :general, :method => :matching_user_exists, :unless => :matching_user?
 
   def initialize(attributes = {})
     attributes.each {|k, v| send("#{k}=", v) }
@@ -47,12 +47,12 @@ class Session
     true
   end
 
+  def matching_user?
+    !matching_user.nil?
+  end
+
   def matching_user_exists
-    if matching_user
-      true
-    else
-      [false, "Invalid email / password combination"]
-    end
+    [false, 'Invalid email / password combination']
   end
 
 end

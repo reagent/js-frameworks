@@ -3,7 +3,7 @@ module Polymorphism
     property :"#{name}_id",   Integer
     property :"#{name}_type", String
 
-    validates_with_method :"#{name}_required", :unless => :"#{name}_set?"
+    validates_with_method name.to_sym, :method => :"#{name}_required", :unless => :"#{name}_set?"
 
     define_method :"#{name}=" do |resource|
       if resource
@@ -26,7 +26,7 @@ module Polymorphism
     end
 
     define_method :"#{name}_required" do
-      errors.add(name.to_sym, 'is required')
+      [false, 'is required']
     end
   end
 

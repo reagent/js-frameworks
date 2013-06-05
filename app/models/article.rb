@@ -35,7 +35,7 @@ class Article
       end
 
     rescue Addressable::URI::InvalidURIError
-      [false, 'URL is invalid']
+      [false, 'is invalid']
     end
   end
 
