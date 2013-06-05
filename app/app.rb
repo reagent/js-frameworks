@@ -83,17 +83,11 @@ class App < Sinatra::Base
   end
 
   api :get, '/users/:id/articles' do
-    user = User.get(params[:id])
-
-    if user
-      api_send_success_response(user.articles)
-    else
-      not_found
-    end
+    fetch_resource(User, params[:id], :articles)
   end
 
   api :get, '/account/articles', :authenticate => true do
-    api_send_success_response(current_user.articles)
+    fetch_association(current_user, :articles)
   end
 
   # Comments
@@ -102,13 +96,7 @@ class App < Sinatra::Base
   end
 
   api :get, '/articles/:id/comments' do
-    article = Article.get(params[:id])
-
-    if article
-      api_send_success_response(article.comments)
-    else
-      not_found
-    end
+    fetch_resource(Article, params[:id], :comments)
   end
 
   api :post, '/articles/:id/comments', :authenticate => true do
@@ -122,13 +110,7 @@ class App < Sinatra::Base
   end
 
   api :get, '/comments/:id/comments' do
-    comment = Comment.get(params[:id])
-
-    if comment
-      api_send_success_response(comment.comments)
-    else
-      not_found
-    end
+    fetch_resource(Comment, params[:id], :comments)
   end
 
   api :post, '/comments/:id/comments', :authenticate => true do
@@ -142,17 +124,11 @@ class App < Sinatra::Base
   end
 
   api :get, '/users/:id/comments' do
-    user = User.get(params[:id])
-
-    if user
-      api_send_success_response(user.comments)
-    else
-      not_found
-    end
+    fetch_resource(User, params[:id], :comments)
   end
 
   api :get, '/account/comments', :authenticate => true do
-    api_send_success_response(current_user.comments)
+    fetch_association(current_user, :comments)
   end
 
   api :delete, '/comments/:id', :authenticate => true do
@@ -203,14 +179,22 @@ class App < Sinatra::Base
     end
   end
 
-  def fetch_resource(klass, id)
+  def fetch_resource(klass, id, association_name = nil)
     resource = klass.get(id)
 
     if resource
-      api_send_success_response(resource)
+      if !association_name.nil?
+        fetch_association(resource, association_name)
+      else
+        api_send_success_response(resource)
+      end
     else
       not_found
     end
+  end
+
+  def fetch_association(instance, association_name)
+    api_send_success_response(instance.send(association_name))
   end
 
   def logged_in?
