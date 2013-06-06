@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'sinatra'
 gem 'data_mapper'
 gem 'dm-sqlite-adapter'
+gem 'dm-ar-finders'
 gem 'bcrypt-ruby',   :require => 'bcrypt'
 gem 'activesupport', :require => false
 

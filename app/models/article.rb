@@ -13,14 +13,19 @@ class Article
   polymorphic_many :votes,    :as => :target
 
   validates_presence_of :url, :message => 'URL must not be blank'
-
   validates_with_method :url, :method => :validate_url, :if => :url?
+
+  after :save, :automatically_upvote
 
   def as_json(*opts)
     {:id => id, :title => title, :url => url.to_s}
   end
 
   private
+
+  def automatically_upvote
+    user.votes.create(:target => self)
+  end
 
   def url?
     !url.nil?

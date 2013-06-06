@@ -19,7 +19,7 @@ describe "Voting", :type => :integration do
 
       expect do
         api_post("/articles/#{article.id}/votes", {}, headers)
-      end.to change { article.votes.count }.from(0).to(1)
+      end.to change { article.votes.count }.by(1)
 
       last_response.should have_api_status(:created)
       last_response.should have_response_body({'id' => Vote.last.id})

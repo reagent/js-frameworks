@@ -106,6 +106,25 @@ describe "Accounts", :type => :integration do
     end
   end
 
+  describe "fetching a user's favorites" do
+    requires_content_type_header_for(:get, '/account/favorites')
+    requires_authentication_for(:get, '/account/favorites')
+
+    it "returns a list of the articles a user has voted on" do
+      token = Factory(:token)
+      user  = token.user
+
+      article = Factory(:article, :title => 'Foo', :url => 'http://example.com/foo')
+
+      Factory(:vote, :user => user, :target => article)
+
+      api_get('/account/favorites', {}, {'HTTP_X_USER_TOKEN' => token.value})
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body([{'id' => article.id, 'title' => 'Foo', 'url' => 'http://example.com/foo'}])
+    end
+  end
+
   describe "deleting a user's account" do
     requires_content_type_header_for(:delete, '/account')
     requires_authentication_for(:delete, '/account')

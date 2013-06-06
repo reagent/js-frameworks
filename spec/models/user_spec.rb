@@ -83,6 +83,24 @@ describe User do
     end
   end
 
+  describe "#favorites" do
+    it "returns a list of articles the user voted on" do
+      subject = Factory(:user)
+      user_2  = Factory(:user)
+
+      article_1 = Factory(:article)
+      article_2 = Factory(:article)
+      article_3 = Factory(:article)
+
+      Factory(:vote, :user => subject, :target => article_1)
+      Factory(:vote, :user => subject, :target => article_3)
+      Factory(:vote, :user => user_2, :target => article_1)
+      Factory(:vote, :user => user_2, :target => article_2)
+
+      subject.favorites.map(&:id).should =~ [article_1.id, article_3.id]
+    end
+  end
+
   describe "#as_json" do
     subject { Factory(:user, :username => 'username', :email => 'user@host.com') }
 

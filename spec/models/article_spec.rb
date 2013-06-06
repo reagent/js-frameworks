@@ -33,6 +33,17 @@ describe Article do
     end
   end
 
+  describe "creation" do
+    it "automatically tallies a vote for the user" do
+      user = Factory(:user)
+
+      subject = Factory.build(:article, :user => user)
+      expect { subject.save }.to change { user.reload.votes.count }.from(0).to(1)
+
+      user.votes.first.target.should == subject
+    end
+  end
+
   describe "#comments" do
     it "is empty by default" do
       subject.comments.should == []
@@ -57,7 +68,7 @@ describe Article do
       vote    = Factory(:vote, :target => subject)
       other   = Factory(:vote)
 
-      subject.votes.should == [vote]
+      subject.votes.should include(vote)
     end
   end
 

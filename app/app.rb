@@ -45,6 +45,10 @@ class App < Sinatra::Base
     end
   end
 
+  api :get, '/account/favorites', :authenticate => true do
+    fetch_association(current_user, :favorites)
+  end
+
   api :delete, '/account', :authenticate => true do
     if current_user.destroy
       api_send_success_response(nil)

@@ -1,4 +1,5 @@
 require 'data_mapper'
+require 'dm-ar-finders'
 require 'active_support/json'
 require 'active_support/inflector'
 require 'bcrypt'
