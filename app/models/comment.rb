@@ -2,9 +2,9 @@ class Comment
   include DataMapper::Resource
   extend Polymorphism
 
-  property :id,          Serial
-  property :user_id,     Integer, :required => true
-  property :body,        Text,    :required => true
+  property :id,      Serial
+  property :user_id, Integer
+  property :body,    Text,    :required => true
 
   belongs_to :user
 

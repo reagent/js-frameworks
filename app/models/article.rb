@@ -3,7 +3,7 @@ class Article
   extend Polymorphism
 
   property :id,      Serial
-  property :user_id, Integer, :required => true
+  property :user_id, Integer
   property :title,   String,  :required => true
   property :url,     URI
 
@@ -24,7 +24,7 @@ class Article
   private
 
   def automatically_upvote
-    user.votes.create(:target => self)
+    user.votes.create(:target => self) if user_id
   end
 
   def url?
