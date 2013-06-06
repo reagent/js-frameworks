@@ -16,7 +16,7 @@ class User
   validates_presence_of :password, :if => :new?
   validates_confirmation_of :password
 
-  before :save, :crypt_password
+  before :save, :crypt_password_if_required
 
   def favorites
     @favorites ||= Article.find_by_sql("
@@ -27,14 +27,25 @@ class User
     ")
   end
 
+  def reload
+    @password              = nil
+    @password_confirmation = nil
+
+    super
+  end
+
   def as_json(*opts)
     {:id => id, :username => username, :email => email}
   end
 
   private
 
-  def crypt_password
-    self.crypted_password = password
+  def crypt_password_if_required
+    self.crypted_password = password if crypt_password?
+  end
+
+  def crypt_password?
+    crypted_password.nil?
   end
 
 end

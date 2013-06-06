@@ -81,6 +81,15 @@ describe User do
       password_string.should_not == password
       BCrypt::Password.new(password_string).should == password
     end
+
+    it "doesn't get changed on save" do
+      subject.save
+      subject.reload
+
+      subject.email = 'changed@example.com'
+
+      expect { subject.save }.to_not change { subject.crypted_password.to_s }
+    end
   end
 
   describe "#favorites" do
