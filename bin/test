@@ -1,0 +1,259 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+
+require 'active_support/json'
+require 'net/http'
+require 'forwardable'
+
+tests = lambda do
+  # Create users
+  request = Request.new('/users')
+  request.post({
+    :username              => 'user_1',
+    :email                 => 'user_1@example.com',
+    :password              => 'password',
+    :password_confirmation => 'password'
+  })
+
+  user_1_id = request.response['id']
+
+  request = Request.new('/users')
+  request.post({
+    :username              => 'user_2',
+    :email                 => 'user_2@example.com',
+    :password              => 'password',
+    :password_confirmation => 'password'
+  })
+
+  user_2_id = request.response['id']
+
+  # Log in
+  request = Request.new('/session')
+  request.post(:email => 'user_1@example.com', :password => 'password')
+
+  user_1_token = request.response['token']
+
+  # Fetch the current user
+  request = Request.new('/account', user_1_token)
+  request.get
+
+  # Fetch another user
+  request = Request.new("/users/#{user_2_id}")
+  request.get
+
+  # Update my account
+  request = Request.new('/account', user_1_token)
+  request.put(:email => 'new_email@example.com')
+
+  # Post article
+  request = Request.new('/articles', user_1_token)
+  request.post(:title => 'Viget Labs', :url => 'http://viget.com')
+
+  article_1_id = request.response['id']
+
+  # Log out
+  request = Request.new('/session', user_1_token)
+  request.delete
+
+  # Log in as another user
+  request = Request.new('/session')
+  request.post(:email => 'user_2@example.com', :password => 'password')
+
+  user_2_token = request.response['token']
+
+  # Post another article
+  request = Request.new('/articles', user_2_token)
+  request.post(:title => 'Viget Twitter', :url => 'http://twitter.com/viget')
+
+  article_2_id = request.response['id']
+
+  # Fetch articles
+  request = Request.new('/articles')
+  request.get
+
+  # Fetch a single article
+  request = Request.new("/articles/#{article_2_id}")
+  request.get
+
+  # Fetch logged-in user's articles
+  request = Request.new('/account/articles', user_2_token)
+  request.get
+
+  # Fetch articles posted by another_user
+  request = Request.new("/users/#{user_1_id}/articles")
+  request.get
+
+  # Vote on another article
+  request = Request.new("/articles/#{article_1_id}/votes", user_2_token)
+  request.post
+
+  # Get my 'favorites'
+  request = Request.new('/account/favorites', user_2_token)
+  request.get
+
+  # Post a comment on an article
+  request = Request.new("/articles/#{article_1_id}/comments", user_2_token)
+  request.post(:body => 'This is so awesome!')
+
+  comment_1_id = request.response['id']
+
+  # Post a comment on a comment
+  request = Request.new("/comments/#{comment_1_id}/comments", user_2_token)
+  request.post(:body => 'Replying to my own comment')
+
+  # Fetch comments for a comment
+  request = Request.new("/comments/#{comment_1_id}/comments")
+  request.get
+
+  # Post a comment on an article as another user
+  request = Request.new('/session')
+  request.post(:email => 'new_email@example.com', :password => 'password')
+
+  user_1_token = request.response['token']
+
+  request = Request.new("/articles/#{article_1_id}/comments", user_1_token)
+  request.post(:body => 'Commenting on my own post')
+
+  # Fetch a single comment
+  request = Request.new("/comments/#{comment_1_id}")
+  request.get
+
+  # Delete a comment
+  request = Request.new("/comments/#{comment_1_id}", user_2_token)
+  request.delete
+
+  # Fetch comments for an article
+  request = Request.new("/articles/#{article_1_id}/comments")
+  request.get
+
+  # Fetch a user's articles
+  request = Request.new("/users/#{user_1_id}/articles")
+  request.get
+
+  # Fetch a user's comments
+  request = Request.new("/users/#{user_1_id}/comments")
+  request.get
+
+  # Fetch my articles
+  request = Request.new('/account/articles', user_2_token)
+  request.get
+
+  # Fetch my comments
+  request = Request.new('/account/comments', user_2_token)
+  request.get
+
+  # Upvote a comment
+  request = Request.new("/comments/#{comment_1_id}/votes", user_1_token)
+  request.post
+
+  # Delete my account
+  request = Request.new('/account', user_2_token)
+  request.delete
+
+end
+
+class Response
+  extend Forwardable
+
+  def_delegators :@http_response, :code, :body
+
+  def initialize(http_response)
+    @http_response = http_response
+  end
+
+  def to_hash
+    @to_hash ||= JSON.parse(@http_response.body)
+  end
+
+  def [](key)
+    to_hash[key]
+  end
+end
+
+class Request
+
+  BASE_URI = 'http://localhost:9292'
+
+  def initialize(path, user_token = nil)
+    @path         = path
+    @user_token   = user_token
+    @raw_response = nil
+  end
+
+  def uri
+    @uri ||= URI.parse("#{BASE_URI}#{@path}")
+  end
+
+  def get
+    puts "Request:"
+    puts "  -> GET #{uri.path}"
+    puts "  -> Headers: #{headers.to_s}"
+
+    @raw_response ||= Net::HTTP.start(uri.host, uri.port) do |http|
+      http.get(uri.path, headers)
+    end
+    response
+  end
+
+  def post(data = {})
+    puts "Request:"
+    puts "  -> POST #{uri.path}"
+    puts "  -> Data: #{data.to_json}"
+    puts "  -> Headers: #{headers.to_s}"
+
+    @raw_response ||= Net::HTTP.start(uri.host, uri.port) do |http|
+      http.post(uri.path, data.to_json, headers)
+    end
+    response
+  end
+
+  def put(data)
+    puts "Request:"
+    puts "  -> PUT #{uri.path}"
+    puts "  -> Data: #{data.to_json}"
+    puts "  -> Headers: #{headers.to_s}"
+
+    @raw_response ||= Net::HTTP.start(uri.host, uri.port) do |http|
+      http.request(Net::HTTP::Put.new(uri.path, headers), data.to_json)
+    end
+    response
+  end
+
+  def delete
+    puts "Request:"
+    puts "  -> DELETE #{uri.path}"
+    puts "  -> Headers: #{headers.to_s}"
+
+    @raw_response ||= Net::HTTP.start(uri.host, uri.port) do |http|
+      http.delete(uri.path, headers)
+    end
+    response
+
+  end
+
+  def response
+    @response ||= if @raw_response
+      response = Response.new(@raw_response)
+      puts "Response:"
+      puts "  -> Status: #{response.code}"
+      puts "  -> #{response.body}"
+
+      response
+    end
+  end
+
+  private
+
+  def headers
+    headers = {'Content-Type' => 'application/json'}
+
+    headers.merge!('X-User-Token' => @user_token) if @user_token
+
+    headers
+  end
+
+end
+
+tests.call
