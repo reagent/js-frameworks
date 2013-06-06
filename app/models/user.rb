@@ -28,8 +28,8 @@ class User
   end
 
   def reload
-    @password              = nil
-    @password_confirmation = nil
+    self.password              = nil
+    self.password_confirmation = nil
 
     super
   end
