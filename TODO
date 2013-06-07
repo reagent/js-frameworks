@@ -1,0 +1,4 @@
+* Add password reset functionality?
+* Add timestamps to all models
+* Implement karma generation
+* Denormalize some JSON responses (e.g. User JSON includes karma, Article / Comment includes vote_count)
