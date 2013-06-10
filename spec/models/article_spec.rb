@@ -67,10 +67,32 @@ describe Article do
     end
   end
 
+  describe "#points" do
+    it "is zero by default" do
+      subject.points.should == 0
+    end
+
+    it "is the sum of all votes for the article" do
+      subject = Factory(:article)
+      other   = Factory(:article)
+
+      Factory(:vote, :target => subject)
+      Factory(:vote, :target => other)
+
+      subject.points.should == 2 # Creating an article automatically adds a vote from the creator
+    end
+  end
+
   describe "#as_json" do
     it "generates a JSON representation of itself" do
-      subject = described_class.create!(:title => 'A new article', :url => 'http://example.org')
-      subject.as_json.should == {:id => subject.id, :title => 'A new article', :url => 'http://example.org'}
+      subject = Factory(:article, :title => 'A new article', :url => 'http://example.org')
+
+      subject.as_json.should == {
+        :id     => subject.id,
+        :points => 1,
+        :title  => 'A new article',
+        :url    => 'http://example.org'
+      }
     end
   end
 

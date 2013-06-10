@@ -17,8 +17,12 @@ class Article
 
   after :save, :automatically_upvote
 
+  def points
+    Vote.count(:target_id => id, :target_type => self.class.to_s)
+  end
+
   def as_json(*opts)
-    {:id => id, :title => title, :url => url.to_s}
+    {:id => id, :points => points, :title => title, :url => url.to_s}
   end
 
   private

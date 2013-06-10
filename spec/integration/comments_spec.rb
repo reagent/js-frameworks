@@ -11,10 +11,13 @@ describe "Comments", :type => :integration do
 
     it "returns the comment" do
       comment = Factory(:comment, :body => 'HI THERE.')
+
+      Factory(:vote, :target => comment)
+
       api_get("/comments/#{comment.id}")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => comment.id, :body => 'HI THERE.'})
+      last_response.should have_response_body({:id => comment.id, :points => 1, :body => 'HI THERE.'})
     end
 
   end
@@ -41,7 +44,7 @@ describe "Comments", :type => :integration do
           api_get(endpoint)
 
           last_response.should have_api_status(:ok)
-          last_response.should have_response_body([{:id => comment.id, :body => 'OMGHI2U!'}])
+          last_response.should have_response_body([{:id => comment.id, :points => 0, :body => 'OMGHI2U!'}])
         end
       end
     end
@@ -70,7 +73,7 @@ describe "Comments", :type => :integration do
         last_comment = Comment.last
 
         last_response.should have_api_status(:created)
-        last_response.should have_response_body(:id => last_comment.id, :body => 'OMGHI2U')
+        last_response.should have_response_body(:id => last_comment.id, :points => 0, :body => 'OMGHI2U')
 
         last_comment.user.should == token.user
       end
@@ -83,7 +86,7 @@ describe "Comments", :type => :integration do
         end.to_not change { article.reload.comments.count }
 
         last_response.should have_api_status(:bad_request)
-        last_response.should have_response_body({'errors' => ['Body must not be blank']})
+        last_response.should have_response_body({:errors => ['Body must not be blank']})
       end
     end
   end
@@ -110,7 +113,7 @@ describe "Comments", :type => :integration do
           api_get(endpoint)
 
           last_response.should have_api_status(:ok)
-          last_response.should have_response_body([{:id => child.id, :body => 'OMGHI2U!'}])
+          last_response.should have_response_body([{:id => child.id, :points => 0, :body => 'OMGHI2U!'}])
         end
       end
     end
@@ -139,7 +142,7 @@ describe "Comments", :type => :integration do
         last_comment = Comment.last
 
         last_response.should have_api_status(:created)
-        last_response.should have_response_body(:id => last_comment.id, :body => 'OMGHI2U')
+        last_response.should have_response_body(:id => last_comment.id, :points => 0, :body => 'OMGHI2U')
 
         last_comment.user.should == token.user
       end
@@ -152,7 +155,7 @@ describe "Comments", :type => :integration do
         end.to_not change { comment.reload.comments.count }
 
         last_response.should have_api_status(:bad_request)
-        last_response.should have_response_body({'errors' => ['Body must not be blank']})
+        last_response.should have_response_body({:errors => ['Body must not be blank']})
       end
     end
   end
@@ -173,7 +176,7 @@ describe "Comments", :type => :integration do
       api_delete("/comments/#{comment.id}", headers)
 
       last_response.should have_api_status(:forbidden)
-      last_response.should have_response_body({'errors' => ["You may not delete others' comments"]})
+      last_response.should have_response_body({:errors => ["You may not delete others' comments"]})
     end
 
     it "removes the comment's content" do
@@ -204,7 +207,7 @@ describe "Comments", :type => :integration do
       api_get("/users/#{user_1.id}/comments")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{'id' => comment_1.id, 'body' => 'OMGHI2U!'}])
+      last_response.should have_response_body([{:id => comment_1.id, :points => 0, :body => 'OMGHI2U!'}])
     end
   end
 
@@ -224,7 +227,7 @@ describe "Comments", :type => :integration do
       api_get('/account/comments', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{'id' => comment_1.id, 'body' => 'OMGHI2U!'}])
+      last_response.should have_response_body([{:id => comment_1.id, :points => 0, :body => 'OMGHI2U!'}])
     end
   end
 

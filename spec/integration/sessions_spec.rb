@@ -14,14 +14,14 @@ describe "Sessions", :type => :integration do
 
       api_post('/session', attributes) do |response|
         response.should have_api_status(:ok)
-        response.should have_response_body({'token' => user.token.value})
+        response.should have_response_body({:token => user.token.value})
       end
     end
 
     it "does not create the session when there is an error" do
       api_post('/session', attributes) do |response|
         response.should_have_api_status(:bad_request)
-        response.should have_response_body({'errors' => ['Invalid email / password combination']})
+        response.should have_response_body({:errors => ['Invalid email / password combination']})
       end
     end
   end

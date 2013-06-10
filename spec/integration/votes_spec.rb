@@ -22,7 +22,7 @@ describe "Voting", :type => :integration do
       end.to change { article.votes.count }.by(1)
 
       last_response.should have_api_status(:created)
-      last_response.should have_response_body({'id' => Vote.last.id})
+      last_response.should have_response_body({:id => Vote.last.id})
     end
 
     it "returns errors when creation fails" do
@@ -34,7 +34,7 @@ describe "Voting", :type => :integration do
       end.to_not change { article.votes.count }
 
       last_response.should have_api_status(:bad_request)
-      last_response.should have_response_body({'errors' => ["You've already voted for this item"]})
+      last_response.should have_response_body({:errors => ["You've already voted for this item"]})
     end
   end
 
@@ -58,7 +58,7 @@ describe "Voting", :type => :integration do
       end.to change { comment.votes.count }.from(0).to(1)
 
       last_response.should have_api_status(:created)
-      last_response.should have_response_body({'id' => Vote.last.id})
+      last_response.should have_response_body({:id => Vote.last.id})
     end
 
     it "returns errors when creation fails" do
@@ -70,7 +70,7 @@ describe "Voting", :type => :integration do
       end.to_not change { comment.votes.count }
 
       last_response.should have_api_status(:bad_request)
-      last_response.should have_response_body({'errors' => ["You've already voted for this item"]})
+      last_response.should have_response_body({:errors => ["You've already voted for this item"]})
     end
   end
 

@@ -97,12 +97,32 @@ describe Comment do
     end
   end
 
+  describe "#points" do
+    it "is zero by default" do
+      subject.points.should == 0
+    end
+
+    it "is a total of all votes" do
+      subject = Factory(:comment)
+      other   = Factory(:comment)
+
+      Factory(:vote, :target => subject)
+      Factory(:vote, :target => other)
+
+      subject.points.should == 1
+    end
+  end
+
   describe "#as_json" do
     it "returns a representation of itself" do
       subject = described_class.create!(:user => Factory(:user), :body => 'Hi there.')
+
+      Factory(:vote, :target => subject)
+
       subject.as_json.should == {
-        :id   => subject.id,
-        :body => 'Hi there.'
+        :id     => subject.id,
+        :points => 1,
+        :body   => 'Hi there.'
       }
     end
   end

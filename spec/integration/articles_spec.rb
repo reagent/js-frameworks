@@ -19,8 +19,8 @@ describe "Articles", :type => :integration do
       article_2 = Factory(:article, :title => 'Two', :url => 'http://example.org/two')
 
       expected = [
-        {'id' => article_1.id, 'title' => 'One', 'url' => 'http://example.org/one'},
-        {'id' => article_2.id, 'title' => 'Two', 'url' => 'http://example.org/two'}
+        {:id => article_1.id, :points => 1, :title => 'One', :url => 'http://example.org/one'},
+        {:id => article_2.id, :points => 1, :title => 'Two', :url => 'http://example.org/two'}
       ]
 
       api_get('/articles').should have_api_status(:ok).and_response_body(expected)
@@ -36,7 +36,7 @@ describe "Articles", :type => :integration do
       api_post('/articles', attributes)
 
       last_response.should have_api_status(:unauthorized)
-      last_response.should have_response_body({'errors' => ['Authentication is required']})
+      last_response.should have_response_body({:errors => ['Authentication is required']})
     end
 
     it "can create an article when there is a valid user" do
@@ -50,7 +50,7 @@ describe "Articles", :type => :integration do
       end.to change { user.articles.count }.by(1)
 
       last_response.should have_api_status(:created)
-      last_response.should have_response_body({'id' => Article.last.id, 'title' => 'One', 'url' => 'http://example.org'})
+      last_response.should have_response_body({:id => Article.last.id, :points => 1, :title => 'One', :url => 'http://example.org'})
     end
 
     it "returns errors when creation fails" do
@@ -62,7 +62,7 @@ describe "Articles", :type => :integration do
       end.to_not change { user.articles.count }
 
       last_response.should have_api_status(:bad_request)
-      last_response.should have_response_body({'errors' => ['Title must not be blank', 'URL must not be blank']})
+      last_response.should have_response_body({:errors => ['Title must not be blank', 'URL must not be blank']})
     end
   end
 
@@ -79,7 +79,7 @@ describe "Articles", :type => :integration do
       api_get('/articles/1')
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({'id' => article.id, 'title' => 'One', 'url' => 'http://example.org/one'})
+      last_response.should have_response_body({:id => article.id, :points => 1, :title => 'One', :url => 'http://example.org/one'})
     end
   end
 
@@ -100,7 +100,7 @@ describe "Articles", :type => :integration do
       api_get("/users/#{user_1.id}/articles")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{'id' => article_1.id, 'title' => 'Foo', 'url' => 'http://example.com'}])
+      last_response.should have_response_body([{:id => article_1.id, :points => 1, :title => 'Foo', :url => 'http://example.com'}])
     end
   end
 
@@ -120,7 +120,7 @@ describe "Articles", :type => :integration do
       api_get('/account/articles', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{'id' => article_1.id, 'title' => 'Foo', 'url' => 'http://example.com'}])
+      last_response.should have_response_body([{:id => article_1.id, :points => 1, :title => 'Foo', :url => 'http://example.com'}])
     end
   end
 

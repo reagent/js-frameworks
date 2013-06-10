@@ -17,8 +17,12 @@ class Comment
     update(:body => '[removed]')
   end
 
+  def points
+    Vote.count(:target_id => id, :target_type => self.class.to_s)
+  end
+
   def as_json(*opts)
-    {:id => id, :body => body}
+    {:id => id, :points => points, :body => body}
   end
 
 end

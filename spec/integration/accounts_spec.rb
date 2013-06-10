@@ -29,7 +29,7 @@ describe "Accounts", :type => :integration do
       expect { api_post('/users', invalid_attributes) }.to_not change { User.count }
 
       last_response.should have_api_status(:bad_request)
-      last_response.should have_response_body({'errors' => ['Password must not be blank']})
+      last_response.should have_response_body({:errors => ['Password must not be blank']})
     end
   end
 
@@ -46,7 +46,7 @@ describe "Accounts", :type => :integration do
       api_get("/users/#{user.id}")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({'id' => user.id, 'username' => 'username', 'email' => 'user@host.com'})
+      last_response.should have_response_body({:id => user.id, :username => 'username', :email => 'user@host.com'})
     end
   end
 
@@ -67,7 +67,7 @@ describe "Accounts", :type => :integration do
       api_get('/account', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({'id' => user.id, 'username' => 'username', 'email' => 'user@host.com'})
+      last_response.should have_response_body({:id => user.id, :username => 'username', :email => 'user@host.com'})
     end
   end
 
@@ -90,7 +90,7 @@ describe "Accounts", :type => :integration do
       end.to change { user.reload.username }.from('username').to('foobar')
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({'id' => user.id, 'username' => 'foobar', 'email' => 'user@host.com'})
+      last_response.should have_response_body({:id => user.id, :username => 'foobar', :email => 'user@host.com'})
     end
 
     it "responds with an error when the user cannot be updated" do
@@ -102,7 +102,7 @@ describe "Accounts", :type => :integration do
       api_put('/account', {:username => 'username_1'}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({'errors' => ['Username is already taken']})
+      last_response.should have_response_body({:errors => ['Username is already taken']})
     end
   end
 
@@ -121,7 +121,7 @@ describe "Accounts", :type => :integration do
       api_get('/account/favorites', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{'id' => article.id, 'title' => 'Foo', 'url' => 'http://example.com/foo'}])
+      last_response.should have_response_body([{:id => article.id, :points => 2, :title => 'Foo', :url => 'http://example.com/foo'}])
     end
   end
 
