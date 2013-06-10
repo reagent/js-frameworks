@@ -1,11 +1,14 @@
 class Article
   include DataMapper::Resource
+  extend Timestamps
   extend Polymorphism
 
   property :id,      Serial
   property :user_id, Integer
   property :title,   String,  :required => true
   property :url,     URI
+
+  enable_timestamps
 
   belongs_to :user
 

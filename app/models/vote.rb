@@ -1,9 +1,12 @@
 class Vote
   include DataMapper::Resource
+  extend Timestamps
   extend Polymorphism
 
   property :id,          Serial
   property :user_id,     Integer, :required => true
+
+  enable_timestamps
 
   belongs_to :user
 

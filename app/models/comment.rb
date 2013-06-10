@@ -1,10 +1,13 @@
 class Comment
   include DataMapper::Resource
+  extend Timestamps
   extend Polymorphism
 
   property :id,      Serial
   property :user_id, Integer
   property :body,    Text,    :required => true
+
+  enable_timestamps
 
   belongs_to :user
 

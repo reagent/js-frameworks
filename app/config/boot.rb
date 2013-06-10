@@ -17,6 +17,8 @@ root = File.expand_path(File.dirname(__FILE__) + '/..')
 DataMapper.setup(:default, "sqlite:///#{root}/db/js-frameworks-#{ENV['APP_ENV']}.sqlite3")
 
 require 'lib/polymorphism'
+require 'lib/timestamps'
+
 require 'models'
 
 DataMapper.auto_upgrade!

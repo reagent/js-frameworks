@@ -1,10 +1,13 @@
 class User
   include DataMapper::Resource
+  extend Timestamps
 
   property :id,               Serial
   property :email,            String, :required => true, :unique => true
   property :username,         String, :required => true, :unique => true
   property :crypted_password, BCryptHash
+
+  enable_timestamps
 
   has 1, :token,    :constraint => :destroy
   has n, :articles, :constraint => :set_nil
