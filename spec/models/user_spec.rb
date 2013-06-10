@@ -110,12 +110,31 @@ describe User do
     end
   end
 
+  describe "#points" do
+    it "is zero by default" do
+      subject.points.should == 0
+    end
+
+    it "combines both article and comment votes" do
+      subject = Factory(:user)
+
+      article = Factory(:article, :user => subject)
+      comment = Factory(:comment, :user => subject)
+
+      Factory(:vote, :target => article)
+      Factory(:vote, :target => comment)
+
+      subject.points.should == 3
+    end
+  end
+
   describe "#as_json" do
     subject { Factory(:user, :username => 'username', :email => 'user@host.com') }
 
     it "generates a JSON representation" do
       expected = {
         :id       => subject.id,
+        :points   => 0,
         :username => 'username',
         :email    => 'user@host.com'
       }

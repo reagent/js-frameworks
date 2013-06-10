@@ -34,8 +34,12 @@ class User
     super
   end
 
+  def points
+    @points ||= KarmaCalculator.new(self).points
+  end
+
   def as_json(*opts)
-    {:id => id, :username => username, :email => email}
+    {:id => id, :points => points, :username => username, :email => email}
   end
 
   private

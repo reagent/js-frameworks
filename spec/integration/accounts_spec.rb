@@ -15,9 +15,10 @@ describe "Accounts", :type => :integration do
       expect { api_post('/users', valid_attributes) }.to change { User.count }.by(1)
 
       expected = {
-        'id'       => User.last.id,
-        'username' => 'username',
-        'email'    => 'user@host.com'
+        :id       => User.last.id,
+        :points   => 0,
+        :username => 'username',
+        :email    => 'user@host.com'
       }
 
       last_response.should have_api_status(:created).and_response_body(expected)
@@ -43,10 +44,18 @@ describe "Accounts", :type => :integration do
     it "returns a matching user" do
       user = Factory(:user, :username => 'username', :email => 'user@host.com')
 
+      comment = Factory(:comment, :user => user)
+      Factory(:vote, :target => comment)
+
       api_get("/users/#{user.id}")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => user.id, :username => 'username', :email => 'user@host.com'})
+      last_response.should have_response_body({
+        :id       => user.id,
+        :points   => 1,
+        :username => 'username',
+        :email    => 'user@host.com'
+      })
     end
   end
 
@@ -67,7 +76,12 @@ describe "Accounts", :type => :integration do
       api_get('/account', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => user.id, :username => 'username', :email => 'user@host.com'})
+      last_response.should have_response_body({
+        :id       => user.id,
+        :points   => 0,
+        :username => 'username',
+        :email    => 'user@host.com'
+      })
     end
   end
 
@@ -90,7 +104,12 @@ describe "Accounts", :type => :integration do
       end.to change { user.reload.username }.from('username').to('foobar')
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => user.id, :username => 'foobar', :email => 'user@host.com'})
+      last_response.should have_response_body({
+        :id       => user.id,
+        :points   => 0,
+        :username => 'foobar',
+        :email    => 'user@host.com'
+      })
     end
 
     it "responds with an error when the user cannot be updated" do
