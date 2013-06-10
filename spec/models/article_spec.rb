@@ -3,11 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '../../spec_helper')
 describe Article do
 
   describe "validations" do
-    it "requires a user" do
-      subject.valid?
-      subject.errors[:user_id].should_not be_empty
-    end
-
     it "requires a title" do
       subject.valid?
       subject.errors[:title].should_not be_empty

@@ -3,11 +3,6 @@ require 'spec_helper'
 describe Comment do
 
   describe "validations" do
-    it "requires a user" do
-      subject.valid?
-      subject.errors[:user_id].should_not be_empty
-    end
-
     it "requires a body" do
       subject.valid?
       subject.errors[:body].should_not be_empty
