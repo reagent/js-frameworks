@@ -2,15 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '../../spec_helper')
 
 describe "Articles", :type => :integration do
 
-  describe "Home page" do
-    it "serves the HTML version of the page" do
-      get('/') do |response|
-        response.should have_status(:ok)
-        response.should have_content_type('text/html')
-      end
-    end
-  end
-
   describe "retrieving a list" do
     requires_content_type_header_for(:get, '/articles')
 

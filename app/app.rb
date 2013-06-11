@@ -8,6 +8,9 @@ $:.unshift(File.dirname(__FILE__))
 require 'config/boot'
 
 class App < Sinatra::Base
+  set :public_folder, ENV['JS_APP_PATH']
+  set :static, true
+
   def self.api(verb, route, options = {}, &block)
     send(verb, route) do
       if !json_request?
@@ -18,10 +21,6 @@ class App < Sinatra::Base
         instance_eval(&block)
       end
     end
-  end
-
-  get '/' do
-    erb :index
   end
 
   # Users
@@ -171,7 +170,32 @@ class App < Sinatra::Base
     end
   end
 
+  get '*' do
+    request_path = params[:splat].first
+
+    if can_serve_static_file?(request_path)
+      send_file static_path_for(request_path), :status => 200
+    else
+      pass
+    end
+  end
+
   private
+
+  def can_serve_static_file?(virtual_path)
+    if %r{\.\w+$} === virtual_path
+      false
+    else
+      File.exist?(static_path_for(virtual_path))
+    end
+  end
+
+  def static_path_for(virtual_path)
+    path = settings.public_folder + virtual_path
+    path.sub!(%r{/?$}, "/index.html") if File.directory?(path)
+
+    path
+  end
 
   def create_resource(klass, additional_attributes = {})
     resource = klass.new(parsed_attributes.merge(additional_attributes))
