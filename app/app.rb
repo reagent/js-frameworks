@@ -6,10 +6,16 @@ require 'sinatra/base'
 $:.unshift(File.dirname(__FILE__))
 
 require 'config/boot'
+require 'config/disable_logging'
 
 class App < Sinatra::Base
-  set :public_folder, ENV['JS_APP_PATH']
-  set :static, true
+
+  configure do
+    set :public_folder, ENV['JS_APP_PATH']
+    enable :logging
+  end
+
+  after { log_request }
 
   def self.api(verb, route, options = {}, &block)
     send(verb, route) do
@@ -275,15 +281,41 @@ class App < Sinatra::Base
   end
 
   def parsed_attributes
-    JSON.parse(request.body.read)
+    JSON.parse(request_body)
   end
 
   def request_content_type
     request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').first
   end
 
+  def request_body
+    @request_body ||= request.body.read
+  end
+
   def json_request?
     request_content_type == json_content_type
+  end
+
+  def log_request
+    header_keys = ['CONTENT_TYPE', 'HTTP_ACCEPT', 'HTTP_X_USER_TOKEN']
+
+    dumped_headers = header_keys.inject([]) do |pairs, key|
+      if request.env.has_key?(key)
+        name = key.sub(/^HTTP_/, '').titleize.gsub(' ', '-')
+        pairs << "'#{name}': '#{request.env[key]}'"
+      end
+      pairs
+    end.join(',')
+
+
+    log_message = "
+  -> #{request.env['REQUEST_METHOD']} #{request.env['REQUEST_URI']} #{response.status}
+
+       Headers: {#{dumped_headers}}
+    Parameters: #{params.inspect}
+          Body: '#{request_body}'"
+
+    request.logger.info(log_message)
   end
 
 end
