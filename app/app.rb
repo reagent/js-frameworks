@@ -176,32 +176,11 @@ class App < Sinatra::Base
     end
   end
 
-  get '*' do
-    request_path = params[:splat].first
-
-    if can_serve_static_file?(request_path)
-      send_file static_path_for(request_path), :status => 200
-    else
-      pass
-    end
+  get '/' do
+    send_file settings.public_folder + '/index.html'
   end
 
   private
-
-  def can_serve_static_file?(virtual_path)
-    if %r{\.\w+$} === virtual_path
-      false
-    else
-      File.exist?(static_path_for(virtual_path))
-    end
-  end
-
-  def static_path_for(virtual_path)
-    path = settings.public_folder + virtual_path
-    path.sub!(%r{/?$}, "/index.html") if File.directory?(path)
-
-    path
-  end
 
   def create_resource(klass, additional_attributes = {})
     resource = klass.new(parsed_attributes.merge(additional_attributes))
