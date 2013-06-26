@@ -180,7 +180,7 @@ class App < Sinatra::Base
     request_path = params[:splat].first
 
     if can_serve_static_file?(request_path)
-      send_file static_path_for(request_path), :status => 200
+      send_file static_path_for(request_path)
     else
       pass
     end
