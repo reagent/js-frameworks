@@ -268,7 +268,7 @@ class App < Sinatra::Base
   end
 
   def api_send_response(status_code, data_to_send = nil)
-    body = data_to_send ? data_to_send.to_json : ''
+    body = data_to_send ? data_to_send.to_json : 'null'
     [status_code, response_headers, body]
   end
 

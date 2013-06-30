@@ -87,7 +87,7 @@ RSpec::Matchers.define :have_api_status do |status_name|
   end
 
   chain :and_have_no_body do
-    @body = ''
+    @body = 'null'
   end
 
   chain :and_response_body do |expected_hash|
