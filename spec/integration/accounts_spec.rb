@@ -29,7 +29,7 @@ describe "Accounts", :type => :integration do
 
       expect { api_post('/users', invalid_attributes) }.to_not change { User.count }
 
-      last_response.should have_api_status(:bad_request)
+      last_response.should have_api_status(:unprocessable_entity)
       last_response.should have_response_body({:errors => ['Password must not be blank']})
     end
   end

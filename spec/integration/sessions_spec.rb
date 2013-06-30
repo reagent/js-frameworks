@@ -20,7 +20,7 @@ describe "Sessions", :type => :integration do
 
     it "does not create the session when there is an error" do
       api_post('/session', attributes) do |response|
-        response.should_have_api_status(:bad_request)
+        response.should_have_api_status(:unprocessable_entity)
         response.should have_response_body({:errors => ['Invalid email / password combination']})
       end
     end

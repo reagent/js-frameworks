@@ -33,7 +33,7 @@ describe "Voting", :type => :integration do
         api_post("/articles/#{article.id}/votes", {}, headers)
       end.to_not change { article.votes.count }
 
-      last_response.should have_api_status(:bad_request)
+      last_response.should have_api_status(:unprocessable_entity)
       last_response.should have_response_body({:errors => ["You've already voted for this item"]})
     end
   end
@@ -69,7 +69,7 @@ describe "Voting", :type => :integration do
         api_post("/comments/#{comment.id}/votes", {}, headers)
       end.to_not change { comment.votes.count }
 
-      last_response.should have_api_status(:bad_request)
+      last_response.should have_api_status(:unprocessable_entity)
       last_response.should have_response_body({:errors => ["You've already voted for this item"]})
     end
   end

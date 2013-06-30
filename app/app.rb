@@ -46,7 +46,7 @@ class App < Sinatra::Base
     if current_user.update(parsed_attributes)
       api_send_success_response(current_user)
     else
-      api_send_error_response(current_user, 422)
+      api_send_error_response(current_user)
     end
   end
 
@@ -58,7 +58,7 @@ class App < Sinatra::Base
     if current_user.destroy
       api_send_success_response(nil)
     else
-      api_send_error_response(current_user, 422)
+      api_send_error_response(current_user)
     end
   end
 
@@ -263,7 +263,7 @@ class App < Sinatra::Base
     api_send_response(status_code, object)
   end
 
-  def api_send_error_response(object, status_code = 400)
+  def api_send_error_response(object, status_code = 422)
     api_send_response(status_code, {:errors => object.errors.values.flatten})
   end
 

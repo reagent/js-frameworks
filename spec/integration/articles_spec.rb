@@ -52,7 +52,7 @@ describe "Articles", :type => :integration do
         api_post('/articles', {}, {'HTTP_X_USER_TOKEN' => token.value})
       end.to_not change { user.articles.count }
 
-      last_response.should have_api_status(:bad_request)
+      last_response.should have_api_status(:unprocessable_entity)
       last_response.should have_response_body({:errors => ['Title must not be blank', 'URL must not be blank']})
     end
   end

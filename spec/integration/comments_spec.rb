@@ -85,7 +85,7 @@ describe "Comments", :type => :integration do
           api_post("/articles/#{article.id}/comments", {}, headers)
         end.to_not change { article.reload.comments.count }
 
-        last_response.should have_api_status(:bad_request)
+        last_response.should have_api_status(:unprocessable_entity)
         last_response.should have_response_body({:errors => ['Body must not be blank']})
       end
     end
@@ -154,7 +154,7 @@ describe "Comments", :type => :integration do
           api_post("/comments/#{comment.id}/comments", {}, headers)
         end.to_not change { comment.reload.comments.count }
 
-        last_response.should have_api_status(:bad_request)
+        last_response.should have_api_status(:unprocessable_entity)
         last_response.should have_response_body({:errors => ['Body must not be blank']})
       end
     end
