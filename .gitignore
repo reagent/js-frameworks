@@ -1,2 +1,3 @@
-.rvmrc
-app/db/*.sqlite3
+/.rvmrc
+/app/db/*.sqlite3
+/html/*

@@ -11,7 +11,7 @@ require 'config/disable_logging'
 class App < Sinatra::Base
 
   configure do
-    set :public_folder, ENV['JS_APP_PATH']
+    set :public_folder, ENV['JS_APP_PATH'] || File.expand_path(File.dirname(__FILE__) + '/../html')
     enable :logging
   end
 
