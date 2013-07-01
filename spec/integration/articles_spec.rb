@@ -53,7 +53,12 @@ describe "Articles", :type => :integration do
       end.to_not change { user.articles.count }
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({:errors => ['Title must not be blank', 'URL must not be blank']})
+      last_response.should have_response_body({
+        :errors => {
+          :keyed => {:title => ['Title must not be blank'], :url => ['URL must not be blank']},
+          :full  => ['Title must not be blank', 'URL must not be blank']
+        }
+      })
     end
   end
 

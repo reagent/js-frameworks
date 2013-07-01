@@ -34,7 +34,12 @@ describe "Voting", :type => :integration do
       end.to_not change { article.votes.count }
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({:errors => ["You've already voted for this item"]})
+      last_response.should have_response_body({
+        :errors => {
+          :keyed => {:user_id => ["You've already voted for this item"]},
+          :full  => ["You've already voted for this item"]
+        }
+      })
     end
   end
 
@@ -70,7 +75,12 @@ describe "Voting", :type => :integration do
       end.to_not change { comment.votes.count }
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({:errors => ["You've already voted for this item"]})
+      last_response.should have_response_body({
+        :errors => {
+          :keyed => {:user_id => ["You've already voted for this item"]},
+          :full  => ["You've already voted for this item"]
+        }
+      })
     end
   end
 

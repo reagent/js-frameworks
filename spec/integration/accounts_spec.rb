@@ -30,7 +30,12 @@ describe "Accounts", :type => :integration do
       expect { api_post('/users', invalid_attributes) }.to_not change { User.count }
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({:errors => ['Password must not be blank']})
+      last_response.should have_response_body({
+        :errors => {
+          :keyed => {:password => ['Password must not be blank']},
+          :full  => ['Password must not be blank']
+        }
+      })
     end
   end
 
@@ -121,7 +126,12 @@ describe "Accounts", :type => :integration do
       api_put('/account', {:username => 'username_1'}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:unprocessable_entity)
-      last_response.should have_response_body({:errors => ['Username is already taken']})
+      last_response.should have_response_body({
+        :errors => {
+          :keyed => {:username => ['Username is already taken']},
+          :full  => ['Username is already taken']
+        }
+      })
     end
   end
 

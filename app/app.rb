@@ -264,7 +264,12 @@ class App < Sinatra::Base
   end
 
   def api_send_error_response(object, status_code = 422)
-    api_send_response(status_code, {:errors => object.errors.values.flatten})
+    api_send_response(status_code, {
+      :errors => {
+        :keyed => object.errors.keyed,
+        :full  => object.errors.values.flatten
+      }
+    })
   end
 
   def api_send_response(status_code, data_to_send = nil)

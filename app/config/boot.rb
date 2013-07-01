@@ -19,6 +19,8 @@ DataMapper.setup(:default, "sqlite:///#{root}/db/js-frameworks-#{ENV['APP_ENV']}
 require 'lib/polymorphism'
 require 'lib/timestamps'
 
+require 'lib/ext/validation_errors'
+
 require 'models'
 
 DataMapper.auto_upgrade!
