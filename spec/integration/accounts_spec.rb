@@ -92,18 +92,23 @@ describe "Accounts", :type => :integration do
 
   describe "updating the currently logged-in user" do
     requires_content_type_header_for(:put, '/account')
-    requires_authentication_for(:put, '/account')
+    requires_content_type_header_for(:patch, '/account')
 
-    it "updates the user's information" do
-      user = Factory(:user, {
+    requires_authentication_for(:put, '/account')
+    requires_authentication_for(:patch, '/account')
+
+    let(:user) do
+      Factory(:user, {
         :username              => 'username',
         :email                 => 'user@host.com',
         :password              => 'password',
         :password_confirmation => 'password'
       })
+    end
 
-      token = Factory(:token, :user => user)
+    let!(:token) { Factory(:token, :user => user) }
 
+    it "updates the user's information" do
       expect do
         api_put('/account', {:username => 'foobar'}, {'HTTP_X_USER_TOKEN' => token.value})
       end.to change { user.reload.username }.from('username').to('foobar')
@@ -131,6 +136,20 @@ describe "Accounts", :type => :integration do
           :keyed => {:username => ['Username is already taken']},
           :full  => ['Username is already taken']
         }
+      })
+    end
+
+    it "allows for only partial updates" do
+      expect do
+        api_patch('/account', {:username => 'foobar'}, {'HTTP_X_USER_TOKEN' => token.value})
+      end.to change { user.reload.username }.from('username').to('foobar')
+
+      last_response.should have_api_status(:ok)
+      last_response.should have_response_body({
+        :id       => user.id,
+        :points   => 0,
+        :username => 'foobar',
+        :email    => 'user@host.com'
       })
     end
   end

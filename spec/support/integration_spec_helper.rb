@@ -17,6 +17,10 @@ module IntegrationSpecHelper
     put(path, attributes.to_json, api_request_headers.merge(headers))
   end
 
+  def api_patch(path, attributes = {}, headers = {})
+    patch(path, attributes.to_json, api_request_headers.merge(headers))
+  end
+
   def api_delete(path, headers = {})
     delete(path, nil, api_request_headers.merge(headers))
   end

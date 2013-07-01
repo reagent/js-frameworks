@@ -43,11 +43,11 @@ class App < Sinatra::Base
   end
 
   api :put, '/account', :authenticate => true do
-    if current_user.update(parsed_attributes)
-      api_send_success_response(current_user)
-    else
-      api_send_error_response(current_user)
-    end
+    update_current_account
+  end
+
+  api :patch, '/account', :authenticate => true do
+    update_current_account
   end
 
   api :get, '/account/favorites', :authenticate => true do
@@ -230,6 +230,15 @@ class App < Sinatra::Base
   def fetch_association(instance, association_name)
     api_send_success_response(instance.send(association_name))
   end
+
+  def update_current_account
+    if current_user.update(parsed_attributes)
+      api_send_success_response(current_user)
+    else
+      api_send_error_response(current_user)
+    end
+  end
+
 
   def logged_in?
     !current_user.nil?
