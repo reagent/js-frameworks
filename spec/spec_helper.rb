@@ -9,6 +9,7 @@ require 'data_mapper'
 require 'sinatra'
 require 'rspec'
 require 'rack/test'
+require 'timecop'
 
 root = File.expand_path(File.dirname(__FILE__) + '../..')
 

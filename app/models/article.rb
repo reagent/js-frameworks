@@ -16,7 +16,7 @@ class Article
   polymorphic_many :votes,    :as => :target
 
   validates_presence_of :url, :message => 'URL must not be blank'
-  validates_with_method :url, :method => :validate_url, :if => :url?
+  validates_with_method :url, :method  => :validate_url, :if => :url?
 
   after :save, :automatically_upvote
 
@@ -25,7 +25,14 @@ class Article
   end
 
   def as_json(*opts)
-    {:id => id, :points => points, :title => title, :url => url.to_s}
+    {
+      :id         => id,
+      :points     => points,
+      :title      => title,
+      :url        => url.to_s,
+      :created_at => created_at.to_s,
+      :updated_at => updated_at.to_s
+    }
   end
 
   private

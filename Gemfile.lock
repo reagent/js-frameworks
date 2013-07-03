@@ -89,6 +89,7 @@ GEM
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
     tilt (1.4.1)
+    timecop (0.5.2)
     uuidtools (2.1.4)
 
 PLATFORMS
@@ -105,3 +106,4 @@ DEPENDENCIES
   rspec (~> 2.13.0)
   sinatra (~> 1.4.0)
   thin (~> 1.5.0)
+  timecop (~> 0.5.2)
