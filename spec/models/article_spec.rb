@@ -95,13 +95,13 @@ describe Article do
     it "generates a JSON representation of itself" do
       subject = Factory(:article,
                         :title => 'A new article',
-                        :url => 'http://example.org')
+                        :url   => 'http://example.org')
 
       subject.as_json.should == {
-        :id     => subject.id,
-        :points => 1,
-        :title  => 'A new article',
-        :url    => 'http://example.org',
+        :id         => subject.id,
+        :points     => 1,
+        :title      => 'A new article',
+        :url        => 'http://example.org',
         :created_at => '2013-01-01T00:00:00-04:00',
         :updated_at => '2013-01-01T00:00:00-04:00'
       }

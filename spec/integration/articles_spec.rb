@@ -64,10 +64,10 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:created)
       last_response.should have_response_body(
         {
-          :id => Article.last.id,
-          :points => 1,
-          :title => 'One',
-          :url => 'http://example.org',
+          :id         => Article.last.id,
+          :points     => 1,
+          :title      => 'One',
+          :url        => 'http://example.org',
           :created_at => '2013-01-01T00:00:00-04:00',
           :updated_at => '2013-01-01T00:00:00-04:00'
         })
@@ -106,10 +106,10 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body(
         {
-          :id => article.id,
-          :points => 1,
-          :title => 'One',
-          :url => 'http://example.org/one',
+          :id         => article.id,
+          :points     => 1,
+          :title      => 'One',
+          :url        => 'http://example.org/one',
           :created_at => '2013-01-01T00:00:00-04:00',
           :updated_at => '2013-01-01T00:00:00-04:00'
         })
@@ -135,10 +135,10 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body([
         {
-          :id => article_1.id,
-          :points => 1,
-          :title => 'Foo',
-          :url => 'http://example.com',
+          :id         => article_1.id,
+          :points     => 1,
+          :title      => 'Foo',
+          :url        => 'http://example.com',
           :created_at => '2013-01-01T00:00:00-04:00',
           :updated_at => '2013-01-01T00:00:00-04:00'
         }])
@@ -163,10 +163,10 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body([
         {
-          :id => article_1.id,
-          :points => 1,
-          :title => 'Foo',
-          :url => 'http://example.com',
+          :id         => article_1.id,
+          :points     => 1,
+          :title      => 'Foo',
+          :url        => 'http://example.com',
           :created_at => '2013-01-01T00:00:00-04:00',
           :updated_at => '2013-01-01T00:00:00-04:00'
         }])
