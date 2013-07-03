@@ -15,4 +15,5 @@ group :test do
   gem 'rspec',        '~> 2.13.0'
   gem 'factory_girl', '~> 4.2.0'
   gem 'rack-test',    '~> 0.6.0'
+  gem 'timecop',      '~> 0.5.2'
 end

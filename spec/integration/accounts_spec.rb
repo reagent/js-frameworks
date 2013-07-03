@@ -158,18 +158,28 @@ describe "Accounts", :type => :integration do
     requires_content_type_header_for(:get, '/account/favorites')
     requires_authentication_for(:get, '/account/favorites')
 
+    before do
+      Timecop.freeze(Time.local(2013))
+    end
+
+    after do
+      Timecop.return
+    end
+
     it "returns a list of the articles a user has voted on" do
       token = Factory(:token)
       user  = token.user
 
-      article = Factory(:article, :title => 'Foo', :url => 'http://example.com/foo')
+      article = Factory(:article,
+                        :title => 'Foo',
+                        :url => 'http://example.com/foo')
 
       Factory(:vote, :user => user, :target => article)
 
       api_get('/account/favorites', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{:id => article.id, :points => 2, :title => 'Foo', :url => 'http://example.com/foo'}])
+      last_response.should have_response_body([{:id => article.id, :points => 2, :title => 'Foo', :url => 'http://example.com/foo', :created_at => '2013-01-01T00:00:00-04:00', :updated_at => '2013-01-01T00:00:00-04:00'}])
     end
   end
 

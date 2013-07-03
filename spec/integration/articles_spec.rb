@@ -1,6 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '../../spec_helper')
 
 describe "Articles", :type => :integration do
+  before do
+    Timecop.freeze(Time.local(2013))
+  end
+
+  after do
+    Timecop.return
+  end
 
   describe "retrieving a list" do
     requires_content_type_header_for(:get, '/articles')
@@ -10,8 +17,22 @@ describe "Articles", :type => :integration do
       article_2 = Factory(:article, :title => 'Two', :url => 'http://example.org/two')
 
       expected = [
-        {:id => article_1.id, :points => 1, :title => 'One', :url => 'http://example.org/one'},
-        {:id => article_2.id, :points => 1, :title => 'Two', :url => 'http://example.org/two'}
+        {
+          :id => article_1.id,
+          :points => 1,
+          :title => 'One',
+          :url => 'http://example.org/one',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        },
+        {
+          :id => article_2.id,
+          :points => 1,
+          :title => 'Two',
+          :url => 'http://example.org/two',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        }
       ]
 
       api_get('/articles').should have_api_status(:ok).and_response_body(expected)
@@ -41,7 +62,15 @@ describe "Articles", :type => :integration do
       end.to change { user.articles.count }.by(1)
 
       last_response.should have_api_status(:created)
-      last_response.should have_response_body({:id => Article.last.id, :points => 1, :title => 'One', :url => 'http://example.org'})
+      last_response.should have_response_body(
+        {
+          :id => Article.last.id,
+          :points => 1,
+          :title => 'One',
+          :url => 'http://example.org',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        })
     end
 
     it "returns errors when creation fails" do
@@ -75,7 +104,15 @@ describe "Articles", :type => :integration do
       api_get('/articles/1')
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => article.id, :points => 1, :title => 'One', :url => 'http://example.org/one'})
+      last_response.should have_response_body(
+        {
+          :id => article.id,
+          :points => 1,
+          :title => 'One',
+          :url => 'http://example.org/one',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        })
     end
   end
 
@@ -96,7 +133,15 @@ describe "Articles", :type => :integration do
       api_get("/users/#{user_1.id}/articles")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{:id => article_1.id, :points => 1, :title => 'Foo', :url => 'http://example.com'}])
+      last_response.should have_response_body([
+        {
+          :id => article_1.id,
+          :points => 1,
+          :title => 'Foo',
+          :url => 'http://example.com',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        }])
     end
   end
 
@@ -116,7 +161,15 @@ describe "Articles", :type => :integration do
       api_get('/account/articles', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{:id => article_1.id, :points => 1, :title => 'Foo', :url => 'http://example.com'}])
+      last_response.should have_response_body([
+        {
+          :id => article_1.id,
+          :points => 1,
+          :title => 'Foo',
+          :url => 'http://example.com',
+          :created_at => '2013-01-01T00:00:00-04:00',
+          :updated_at => '2013-01-01T00:00:00-04:00'
+        }])
     end
   end
 
