@@ -298,9 +298,18 @@ class App < Sinatra::Base
     JSON.parse(request_body)
   end
 
+  def accept_content_types
+    if request.env['HTTP_ACCEPT']
+      request.env['HTTP_ACCEPT'].split(', ').map do |content_type|
+        content_type.split('; ').first
+      end
+    else
+      []
+    end
+  end
+
   def request_content_types
-    selected_value = request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').compact.first
-    selected_value ? selected_value.split(', ') : []
+    [request.env['CONTENT_TYPE'], accept_content_types].compact.first
   end
 
   def request_body
