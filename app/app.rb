@@ -298,8 +298,9 @@ class App < Sinatra::Base
     JSON.parse(request_body)
   end
 
-  def request_content_type
-    request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').first
+  def request_content_types
+    selected_value = request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').compact.first
+    selected_value ? selected_value.split(', ') : []
   end
 
   def request_body
@@ -307,7 +308,7 @@ class App < Sinatra::Base
   end
 
   def json_request?
-    request_content_type == json_content_type
+    request_content_types.include?(json_content_type)
   end
 
   def log_request
