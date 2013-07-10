@@ -308,8 +308,14 @@ class App < Sinatra::Base
     end
   end
 
+  def content_type_header
+    if request.env['CONTENT_TYPE']
+      [request.env['CONTENT_TYPE'].split('; ').first]
+    end
+  end
+
   def request_content_types
-    [request.env['CONTENT_TYPE'], accept_content_types].compact.first
+    [content_type_header, accept_content_types].compact.first
   end
 
   def request_body
