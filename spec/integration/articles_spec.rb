@@ -98,6 +98,14 @@ describe "Articles", :type => :integration do
       api_get('/articles/1').should have_api_status(:not_found).and_have_no_body
     end
 
+    it "accepts an accepts header with multiple values" do
+      article = Factory(:article, :title => 'One', :url => 'http://example.org/one')
+
+      get('/articles/1', {}, {'HTTP_ACCEPT' => 'application/json, text/javascript, */*; q=0.01'})
+      
+      last_response.should have_api_status(:ok)
+    end
+
     it "returns the article" do
       article = Factory(:article, :title => 'One', :url => 'http://example.org/one')
 

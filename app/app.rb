@@ -298,8 +298,26 @@ class App < Sinatra::Base
     JSON.parse(request_body)
   end
 
-  def request_content_type
-    request.env.values_at('CONTENT_TYPE', 'HTTP_ACCEPT').first
+  def accept_media_types
+    raw_accept_header.split(/, ?/).map {|mt| extract_type_from(mt) }
+  end
+
+  def extract_type_from(media_type_string)
+    media_type_string.split(/; ?/).first
+  end
+
+  def raw_accept_header
+    request.env['HTTP_ACCEPT'] || ''
+  end
+
+  def content_type_header
+    if request.env['CONTENT_TYPE']
+      [extract_type_from(request.env['CONTENT_TYPE'])]
+    end
+  end
+
+  def request_media_types
+    [content_type_header, accept_media_types].compact.first
   end
 
   def request_body
@@ -307,7 +325,7 @@ class App < Sinatra::Base
   end
 
   def json_request?
-    request_content_type == json_content_type
+    request_media_types.include?(json_content_type)
   end
 
   def log_request
