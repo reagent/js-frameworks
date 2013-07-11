@@ -185,8 +185,8 @@ describe "Accounts", :type => :integration do
           :points     => 2,
           :title      => 'Foo',
           :url        => 'http://example.com/foo',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         }])
     end
   end

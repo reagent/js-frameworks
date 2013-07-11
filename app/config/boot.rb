@@ -24,3 +24,6 @@ require 'lib/ext/validation_errors'
 require 'models'
 
 DataMapper.auto_upgrade!
+
+# Make the application timezone agnostic
+ENV['TZ'] = 'UTC'
