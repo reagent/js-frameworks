@@ -22,16 +22,16 @@ describe "Articles", :type => :integration do
           :points => 1,
           :title => 'One',
           :url => 'http://example.org/one',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         },
         {
           :id => article_2.id,
           :points => 1,
           :title => 'Two',
           :url => 'http://example.org/two',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         }
       ]
 
@@ -68,8 +68,8 @@ describe "Articles", :type => :integration do
           :points     => 1,
           :title      => 'One',
           :url        => 'http://example.org',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         })
     end
 
@@ -118,8 +118,8 @@ describe "Articles", :type => :integration do
           :points     => 1,
           :title      => 'One',
           :url        => 'http://example.org/one',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         })
     end
   end
@@ -147,8 +147,8 @@ describe "Articles", :type => :integration do
           :points     => 1,
           :title      => 'Foo',
           :url        => 'http://example.com',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         }])
     end
   end
@@ -175,8 +175,8 @@ describe "Articles", :type => :integration do
           :points     => 1,
           :title      => 'Foo',
           :url        => 'http://example.com',
-          :created_at => '2013-01-01T00:00:00-04:00',
-          :updated_at => '2013-01-01T00:00:00-04:00'
+          :created_at => '2013-01-01T00:00:00+00:00',
+          :updated_at => '2013-01-01T00:00:00+00:00'
         }])
     end
   end
