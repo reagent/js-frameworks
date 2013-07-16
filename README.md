@@ -6,37 +6,37 @@ I think that the best way to gain proficiency in any technology is to build an a
 
 ## Format
 
-We will spend about 5 months learning these three frameworks, which means that we will dedicate 6 weeks to each framework.  During those 6 weeks, we will meet as a group every other week to demo our applications and help each other out with any problems we encounter.
+We will spend about 6 months learning these three frameworks, which means that we will dedicate 8 weeks to each framework.  During those 8 weeks, we will meet as a group every other week to demo our applications and help each other out with any problems we encounter.
 
 ## Schedule
 
-We'll kick off with Backbone.js on the 17th, and then continue on to the other 2 frameworks.  If people are interested in continuing after the 5 months, we can tackle an additional framework.  I have Ext.js listed here, but we could easily do something like Can.js or something that's more relevant.
+We'll kick off with Backbone.js on the 17th, and then continue on to the other 2 frameworks.
 
 Here's the full meeting schedule:
 
 ### Backbone.js
 
-* June 17th
-* July 1st
-* July 15th
+* June 17th -- Intro
+* July 1st -- Week 1-2 demo
+* July 15th -- Week 3-4 demo
+* July 29th -- Week 5-6 demo
+* August 12th -- Week 7-8 demo / Wrap-up
 
 ### Ember.js
 
-* July 29th
-* August 12th
-* August 26th
+* August 26th -- Intro
+* September 9th -- Week 1-2 demo
+* September 23rd -- Week 3-4 demo
+* October 7th -- Week 5-6 demo
+* October 21st -- Week 7-8 demo / Wrap-up
 
 ### Angular.js
 
-* September 9th
-* September 23rd
-* October 7th
-
-### Ext.js or other (optional)
-
-* October 21st
-* November 4th
-* November 18th
+* November 4th -- Intro
+* November 18th -- Week 1-2 demo
+* December 2nd -- Week 3-4 demo
+* December 16th -- Week 5-6 demo
+* December 30th -- Week 7-8 demo / Wrap-up
 
 ## Breakdown of Functionality
 
@@ -48,19 +48,22 @@ Between meetings, we will be working on building out the functionality of the ap
 * Users can log in to their account (i.e. generate an authentication token)
 * Users can update their account information
 * Users can view their account information
-* Users can post an article
-* Visitors can view a list of posted articles
 
 ### Weeks 3-4
 
+* Users can post an article
+* Visitors can view a list of posted articles
 * Users can up-vote an article
 * Users can comment on an article
+
+### Weeks 5-6
+
 * Users can reply to a comment
 * Users can up-vote a comment
 * Visitors can view a single article with threaded comments
 * Visitors can view threaded replies to a comment
 
-### Weeks 5-6
+### Weeks 7-8
 
 * Users can log out (i.e. destroy their authentication token)
 * Users can remove a comment they have left
