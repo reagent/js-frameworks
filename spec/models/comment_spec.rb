@@ -75,6 +75,38 @@ describe Comment do
     end
   end
 
+  describe "#reply_count" do
+    it "is zero by default" do
+      subject.reply_count.should == 0
+    end
+
+    it "counts only direct replies to this comment" do
+      subject = Factory(:comment)
+      reply_1 = Factory(:comment, :parent => subject)
+      reply_2 = Factory(:comment, :parent => reply_1)
+      other   = Factory(:comment)
+
+      subject.reply_count.should == 1
+    end
+  end
+
+  describe "#comment_count" do
+    it "is zero by default" do
+      subject.comment_count.should == 0
+    end
+
+    it "is the count of all replies" do
+      subject = Factory(:comment)
+      reply_1 = Factory(:comment, :parent => subject)
+      reply_2 = Factory(:comment, :parent => reply_1)
+      reply_3 = Factory(:comment, :parent => reply_1)
+
+      other_reply = Factory(:comment)
+
+      subject.comment_count.should == 3
+    end
+  end
+
   describe "#votes" do
     it "is empty by default" do
       subject.votes.should == []
@@ -115,14 +147,18 @@ describe Comment do
 
   describe "#as_json" do
     it "returns a representation of itself" do
-      subject = described_class.create!(:user => Factory(:user), :body => 'Hi there.')
+      user    = Factory(:user, :username => 'anonymous')
+      subject = described_class.create!(:user => user, :body => 'Hi there.')
 
       Factory(:vote, :target => subject)
 
       subject.as_json.should == {
-        :id     => subject.id,
-        :points => 1,
-        :body   => 'Hi there.'
+        :id            => subject.id,
+        :points        => 1,
+        :comment_count => 0,
+        :user_id       => user.id,
+        :username      => 'anonymous',
+        :body          => 'Hi there.'
       }
     end
   end

@@ -239,7 +239,6 @@ class App < Sinatra::Base
     end
   end
 
-
   def logged_in?
     !current_user.nil?
   end

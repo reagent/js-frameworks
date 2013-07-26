@@ -83,6 +83,37 @@ describe Article do
     end
   end
 
+  describe "#reply_count" do
+    it "is zero by default" do
+      subject.reply_count.should == 0
+    end
+
+    it "returns the count of direct replies" do
+      subject = Factory(:article)
+      reply_1 = Factory(:comment, :parent => subject)
+      reply_2 = Factory(:comment, :parent => reply_1)
+      other   = Factory(:comment)
+
+      subject.reply_count.should == 1
+    end
+  end
+
+  describe "#comment_count" do
+    it "is zero by default" do
+      subject.comment_count.should == 0
+    end
+
+    it "is the count of all comments" do
+      subject = Factory(:article)
+      reply_1 = Factory(:comment, :parent => subject)
+      reply_2 = Factory(:comment, :parent => subject)
+      reply_3 = Factory(:comment, :parent => reply_1)
+      other   = Factory(:comment)
+
+      subject.comment_count.should == 3
+    end
+  end
+
   describe "#as_json" do
     before do
       Timecop.freeze(Time.local(2013))
@@ -93,17 +124,24 @@ describe Article do
     end
 
     it "generates a JSON representation of itself" do
-      subject = Factory(:article,
-                        :title => 'A new article',
-                        :url   => 'http://example.org')
+      user = Factory(:user, :username => 'anonymous')
+
+      subject = Factory(:article, {
+        :user  => user,
+        :title => 'A new article',
+        :url   => 'http://example.org'
+      })
 
       subject.as_json.should == {
-        :id         => subject.id,
-        :points     => 1,
-        :title      => 'A new article',
-        :url        => 'http://example.org',
-        :created_at => '2013-01-01T00:00:00+00:00',
-        :updated_at => '2013-01-01T00:00:00+00:00'
+        :id            => subject.id,
+        :points        => 1,
+        :comment_count => 0,
+        :user_id       => user.id,
+        :username      => 'anonymous',
+        :title         => 'A new article',
+        :url           => 'http://example.org',
+        :created_at    => '2013-01-01T00:00:00+00:00',
+        :updated_at    => '2013-01-01T00:00:00+00:00'
       }
     end
   end

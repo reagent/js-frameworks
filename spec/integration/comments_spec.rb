@@ -17,7 +17,14 @@ describe "Comments", :type => :integration do
       api_get("/comments/#{comment.id}")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body({:id => comment.id, :points => 1, :body => 'HI THERE.'})
+      last_response.should have_response_body({
+        :id            => comment.id,
+        :body          => 'HI THERE.',
+        :user_id       => comment.user_id,
+        :username      => comment.user.username,
+        :points        => 1,
+        :comment_count => 0
+      })
     end
 
   end
@@ -44,7 +51,16 @@ describe "Comments", :type => :integration do
           api_get(endpoint)
 
           last_response.should have_api_status(:ok)
-          last_response.should have_response_body([{:id => comment.id, :points => 0, :body => 'OMGHI2U!'}])
+          last_response.should have_response_body([
+            {
+              :id            => comment.id,
+              :body          => 'OMGHI2U!',
+              :user_id       => comment.user_id,
+              :username      => comment.user.username,
+              :points        => 0,
+              :comment_count => 0
+            }
+          ])
         end
       end
     end
@@ -73,7 +89,14 @@ describe "Comments", :type => :integration do
         last_comment = Comment.last
 
         last_response.should have_api_status(:created)
-        last_response.should have_response_body(:id => last_comment.id, :points => 0, :body => 'OMGHI2U')
+        last_response.should have_response_body({
+          :id            => last_comment.id,
+          :body          => 'OMGHI2U',
+          :user_id       => last_comment.user_id,
+          :username      => last_comment.user.username,
+          :points        => 0,
+          :comment_count => 0
+        })
 
         last_comment.user.should == token.user
       end
@@ -118,7 +141,16 @@ describe "Comments", :type => :integration do
           api_get(endpoint)
 
           last_response.should have_api_status(:ok)
-          last_response.should have_response_body([{:id => child.id, :points => 0, :body => 'OMGHI2U!'}])
+          last_response.should have_response_body([
+            {
+              :id            => child.id,
+              :body          => 'OMGHI2U!',
+              :user_id       => child.user_id,
+              :username      => child.user.username,
+              :points        => 0,
+              :comment_count => 0
+            }
+          ])
         end
       end
     end
@@ -147,7 +179,14 @@ describe "Comments", :type => :integration do
         last_comment = Comment.last
 
         last_response.should have_api_status(:created)
-        last_response.should have_response_body(:id => last_comment.id, :points => 0, :body => 'OMGHI2U')
+        last_response.should have_response_body({
+          :id            => last_comment.id,
+          :body          => 'OMGHI2U',
+          :user_id       => last_comment.user_id,
+          :username      => last_comment.user.username,
+          :points        => 0,
+          :comment_count => 0
+        })
 
         last_comment.user.should == token.user
       end
@@ -217,7 +256,16 @@ describe "Comments", :type => :integration do
       api_get("/users/#{user_1.id}/comments")
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{:id => comment_1.id, :points => 0, :body => 'OMGHI2U!'}])
+      last_response.should have_response_body([
+        {
+          :id            => comment_1.id,
+          :body          => 'OMGHI2U!',
+          :user_id       => comment_1.user_id,
+          :username      => comment_1.user.username,
+          :points        => 0,
+          :comment_count => 0
+        }
+      ])
     end
   end
 
@@ -237,7 +285,16 @@ describe "Comments", :type => :integration do
       api_get('/account/comments', {}, {'HTTP_X_USER_TOKEN' => token.value})
 
       last_response.should have_api_status(:ok)
-      last_response.should have_response_body([{:id => comment_1.id, :points => 0, :body => 'OMGHI2U!'}])
+      last_response.should have_response_body([
+        {
+          :id            => comment_1.id,
+          :body          => 'OMGHI2U!',
+          :user_id       => comment_1.user_id,
+          :username      => comment_1.user.username,
+          :points        => 0,
+          :comment_count => 0
+        }
+      ])
     end
   end
 
