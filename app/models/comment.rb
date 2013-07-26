@@ -24,8 +24,28 @@ class Comment
     Vote.count(:target_id => id, :target_type => self.class.to_s)
   end
 
+  def reply_count
+    Comment.count(:parent_id => id, :parent_type => self.class.to_s)
+  end
+
+  def comment_count
+    # TODO: optimize
+    if comments.any?
+      comments.inject(reply_count) {|s, c| s += c.comment_count }
+    else
+      0
+    end
+  end
+
   def as_json(*opts)
-    {:id => id, :points => points, :body => body}
+    {
+      :id            => id,
+      :body          => body,
+      :user_id       => user_id,
+      :username      => user.username,
+      :points        => points,
+      :comment_count => comment_count
+    }
   end
 
 end

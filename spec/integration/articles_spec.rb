@@ -18,20 +18,26 @@ describe "Articles", :type => :integration do
 
       expected = [
         {
-          :id => article_1.id,
-          :points => 1,
-          :title => 'One',
-          :url => 'http://example.org/one',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => article_1.id,
+          :title         => 'One',
+          :url           => 'http://example.org/one',
+          :user_id       => article_1.user_id,
+          :username      => article_1.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         },
         {
-          :id => article_2.id,
-          :points => 1,
-          :title => 'Two',
-          :url => 'http://example.org/two',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => article_2.id,
+          :title         => 'Two',
+          :url           => 'http://example.org/two',
+          :user_id       => article_2.user_id,
+          :username      => article_2.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         }
       ]
 
@@ -61,15 +67,20 @@ describe "Articles", :type => :integration do
         api_post('/articles', attributes, {'HTTP_X_USER_TOKEN' => token.value})
       end.to change { user.articles.count }.by(1)
 
+      created_article = Article.last
+
       last_response.should have_api_status(:created)
       last_response.should have_response_body(
         {
-          :id         => Article.last.id,
-          :points     => 1,
-          :title      => 'One',
-          :url        => 'http://example.org',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => created_article.id,
+          :title         => 'One',
+          :url           => 'http://example.org',
+          :user_id       => created_article.user_id,
+          :username      => created_article.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         })
     end
 
@@ -102,7 +113,7 @@ describe "Articles", :type => :integration do
       article = Factory(:article, :title => 'One', :url => 'http://example.org/one')
 
       get('/articles/1', {}, {'HTTP_ACCEPT' => 'application/json, text/javascript, */*; q=0.01'})
-      
+
       last_response.should have_api_status(:ok)
     end
 
@@ -114,12 +125,15 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body(
         {
-          :id         => article.id,
-          :points     => 1,
-          :title      => 'One',
-          :url        => 'http://example.org/one',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => article.id,
+          :title         => 'One',
+          :url           => 'http://example.org/one',
+          :user_id       => article.user_id,
+          :username      => article.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         })
     end
   end
@@ -143,12 +157,15 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body([
         {
-          :id         => article_1.id,
-          :points     => 1,
-          :title      => 'Foo',
-          :url        => 'http://example.com',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => article_1.id,
+          :title         => 'Foo',
+          :url           => 'http://example.com',
+          :user_id       => article_1.user_id,
+          :username      => article_1.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         }])
     end
   end
@@ -171,13 +188,17 @@ describe "Articles", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body([
         {
-          :id         => article_1.id,
-          :points     => 1,
-          :title      => 'Foo',
-          :url        => 'http://example.com',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
-        }])
+          :id            => article_1.id,
+          :title         => 'Foo',
+          :url           => 'http://example.com',
+          :user_id       => article_1.user_id,
+          :username      => article_1.user.username,
+          :points        => 1,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
+        }
+      ])
     end
   end
 

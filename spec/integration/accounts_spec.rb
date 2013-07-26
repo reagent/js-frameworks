@@ -170,9 +170,12 @@ describe "Accounts", :type => :integration do
       token = Factory(:token)
       user  = token.user
 
-      article = Factory(:article,
-                        :title => 'Foo',
-                        :url => 'http://example.com/foo')
+      poster  = Factory(:user, :username => 'foobar')
+      article = Factory(:article, {
+        :user  => poster,
+        :title => 'Foo',
+        :url   => 'http://example.com/foo'
+      })
 
       Factory(:vote, :user => user, :target => article)
 
@@ -181,12 +184,15 @@ describe "Accounts", :type => :integration do
       last_response.should have_api_status(:ok)
       last_response.should have_response_body([
         {
-          :id         => article.id,
-          :points     => 2,
-          :title      => 'Foo',
-          :url        => 'http://example.com/foo',
-          :created_at => '2013-01-01T00:00:00+00:00',
-          :updated_at => '2013-01-01T00:00:00+00:00'
+          :id            => article.id,
+          :title         => 'Foo',
+          :url           => 'http://example.com/foo',
+          :user_id       => poster.id,
+          :username      => 'foobar',
+          :points        => 2,
+          :comment_count => 0,
+          :created_at    => '2013-01-01T00:00:00+00:00',
+          :updated_at    => '2013-01-01T00:00:00+00:00'
         }])
     end
   end
